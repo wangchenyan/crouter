@@ -1,0 +1,57 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'auto-register'
+
+android {
+    compileSdkVersion Integer.parseInt(COMPILE_SDK_VERSION)
+
+    defaultConfig {
+        applicationId "me.wcy.crouter"
+        minSdkVersion 14
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+/**
+ * crouter 参数，必须！！！
+ */
+kapt {
+    arguments {
+        arg("moduleName", project.name)
+        arg("defaultScheme", "(http|https|native|host)")
+        arg("defaultHost", "(\\w+\\.)*host\\.com")
+    }
+}
+
+/**
+ * 路由收集，必须！！！
+ */
+autoregister {
+    registerInfo = [
+            [
+                    'scanInterface'        : 'me.wcy.router.annotation.RouterLoader',
+                    'codeInsertToClassName': 'me.wcy.router.RouterSet',
+                    'registerMethodName'   : 'register',
+                    'include'              : ['me/wcy/router/annotation/loader/.*']
+            ]
+    ]
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
+    kapt project(':crouter-compiler')
+    implementation project(':crouter-api')
+}

@@ -1,0 +1,4 @@
+include ':example'
+include ':crouter-annotation'
+include ':crouter-api'
+include ':crouter-compiler'
