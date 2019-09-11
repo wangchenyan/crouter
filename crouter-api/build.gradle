@@ -33,6 +33,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api project(':crouter-annotation')
+    implementation project(':crouter-annotation')
     compileOnly "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
 }

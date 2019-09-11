@@ -8,11 +8,11 @@ android {
     compileSdkVersion Integer.parseInt(COMPILE_SDK_VERSION)
 
     defaultConfig {
-        applicationId "me.wcy.crouter"
+        applicationId "me.wcy.crouter.example"
         minSdkVersion 14
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 1
-        versionName "1.0"
+        versionName VERSION_NAME
     }
 
     buildTypes {
@@ -53,5 +53,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
     kapt project(':crouter-compiler')
+    implementation project(':crouter-annotation')
     implementation project(':crouter-api')
 }

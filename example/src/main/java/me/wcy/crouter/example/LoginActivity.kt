@@ -1,4 +1,4 @@
-package me.wcy.crouter
+package me.wcy.crouter.example
 
 import android.app.Activity
 import android.os.Bundle
