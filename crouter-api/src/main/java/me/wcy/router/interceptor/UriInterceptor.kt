@@ -15,7 +15,7 @@ class UriInterceptor : Interceptor {
         val request = chain.request()
         val uri = request.uri()
         uri?.let {
-            val routerSet = CRouter.routerSet()
+            val routerSet = CRouter.getRouterSet()
             for (router in routerSet) {
                 if (RouterUtils.match(router, uri)) {
                     val context = request.context()

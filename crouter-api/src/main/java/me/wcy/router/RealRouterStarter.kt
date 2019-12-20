@@ -15,11 +15,11 @@ internal class RealRouterStarter : RouterStarter {
 
     override fun startForResult(request: Request, listener: ResultListener?) {
         val context = request.context()
-        val client = CRouter.routerClient()
+        val client = CRouter.getRouterClient()
         val call = client.newCall(request)
         val response = call.execute()
 
-        val loginProvider = CRouter.loginProvider()
+        val loginProvider = CRouter.getLoginProvider()
         if (response.needLogin() && loginProvider != null) {
             loginProvider.login(context, object : LoginProvider.Callback {
                 override fun onLogin() {
@@ -40,9 +40,9 @@ internal class RealRouterStarter : RouterStarter {
             val intent = buildIntent(response)
             if (context is Activity && listener != null) {
                 try {
-                    val requestCode = CRouter.resultManager().genRequestCode()
+                    val requestCode = CRouter.getResultManager().genRequestCode()
                     context.startActivityForResult(intent, requestCode)
-                    CRouter.resultManager().add(requestCode, listener)
+                    CRouter.getResultManager().add(requestCode, listener)
                 } catch (e: Exception) {
                     Log.e(CRouter.TAG, "start activity for result error, response=$response", e)
                 }

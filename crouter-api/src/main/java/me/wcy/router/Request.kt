@@ -172,64 +172,80 @@ class Request internal constructor(builder: Builder) {
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Boolean): Builder {
-            extras.putExtra(name, value)
+        fun extra(name: String, value: Boolean?): Builder {
+            if (value != null) {
+                extras.putExtra(name, value)
+            }
             return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Int): Builder {
-            extras.putExtra(name, value)
+        fun extra(name: String, value: Int?): Builder {
+            if (value != null) {
+                extras.putExtra(name, value)
+            }
             return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Long): Builder {
-            extras.putExtra(name, value)
+        fun extra(name: String, value: Long?): Builder {
+            if (value != null) {
+                extras.putExtra(name, value)
+            }
             return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Float): Builder {
-            extras.putExtra(name, value)
+        fun extra(name: String, value: Float?): Builder {
+            if (value != null) {
+                extras.putExtra(name, value)
+            }
             return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Double): Builder {
-            extras.putExtra(name, value)
+        fun extra(name: String, value: Double?): Builder {
+            if (value != null) {
+                extras.putExtra(name, value)
+            }
             return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: String): Builder {
-            extras.putExtra(name, value)
+        fun extra(name: String, value: String?): Builder {
+            if (value != null) {
+                extras.putExtra(name, value)
+            }
             return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Serializable): Builder {
-            extras.putExtra(name, value)
+        fun extra(name: String, value: Serializable?): Builder {
+            if (value != null) {
+                extras.putExtra(name, value)
+            }
             return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Parcelable): Builder {
-            extras.putExtra(name, value)
+        fun extra(name: String, value: Parcelable?): Builder {
+            if (value != null) {
+                extras.putExtra(name, value)
+            }
             return this
         }
 
@@ -268,7 +284,7 @@ class Request internal constructor(builder: Builder) {
          */
         fun start() {
             val request = build()
-            CRouter.routerStarter().start(request)
+            CRouter.getRouterStarter().start(request)
         }
 
         /**
@@ -276,7 +292,7 @@ class Request internal constructor(builder: Builder) {
          */
         fun startForResult(listener: ResultListener) {
             val request = build()
-            CRouter.routerStarter().startForResult(request, listener)
+            CRouter.getRouterStarter().startForResult(request, listener)
         }
     }
 }
