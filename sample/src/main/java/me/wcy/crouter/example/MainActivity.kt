@@ -40,7 +40,8 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         when (v) {
             button1 -> {
                 CRouter.with(this)
-                    .url("https://host.com/target.html").startForResult(object : ResultListener {
+                    .url("https://host.com/target.html")
+                    .startForResult(object : ResultListener {
                         override fun onActivityResult(
                             requestCode: Int,
                             resultCode: Int,
