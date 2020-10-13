@@ -33,7 +33,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.billy.android:autoregister:1.4.1'
+        classpath 'com.billy.android:autoregister:1.4.2'
     }
 }
 ```

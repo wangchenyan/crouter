@@ -2,6 +2,7 @@ package me.wcy.router
 
 import android.net.Uri
 import me.wcy.router.annotation.Route
+import java.lang.IllegalArgumentException
 
 /**
  * Created by wcy on 2019/7/13.
@@ -21,11 +22,15 @@ object RouterUtils {
      * 格式化 URL，移除重复的 '/' 和最后一个 '/'
      */
     private fun formatUrl(url: String): String {
-        var result = url.replace(Regex("/+"), "/")
-                .replace(":/", "://")
-        if (result.endsWith("/")) {
-            result = result.dropLast(1)
+        val list = url.split(Regex("://"))
+        if (list.size != 2) {
+            throw IllegalArgumentException("url '$url' is illegal")
         }
-        return result
+        val scheme = list[0]
+        var path = list[1].replace(Regex("/+"), "/")
+        if (path.endsWith("/")) {
+            path = path.dropLast(1)
+        }
+        return "$scheme://$path"
     }
 }

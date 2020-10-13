@@ -54,7 +54,7 @@ autoregister {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     kapt project(':crouter-compiler')
     implementation project(':crouter-annotation')
     implementation project(':crouter-api')

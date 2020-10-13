@@ -35,18 +35,21 @@ class RouterProcessor : AbstractProcessor() {
         val defaultScheme = processingEnv.options["defaultScheme"]
         val defaultHost = processingEnv.options["defaultHost"]
         if (moduleName == null || moduleName.isEmpty()
-                || defaultScheme == null || defaultScheme.isEmpty()
-                || defaultHost == null || defaultHost.isEmpty()) {
-            throw IllegalArgumentException("[CRouter] Can not find apt argument 'moduleName', 'defaultScheme' or 'defaultHost', check if has add the code like this in module's build.gradle:\n" +
-                    "    In Kotlin:\n" +
-                    "    \n" +
-                    "    kapt {\n" +
-                    "        arguments {\n" +
-                    "          arg(\"moduleName\", project.name)\n" +
-                    "          arg(\"defaultScheme\", 'scheme')\n" +
-                    "          arg(\"defaultHost\", 'host')\n" +
-                    "        }\n" +
-                    "    }\n")
+            || defaultScheme == null || defaultScheme.isEmpty()
+            || defaultHost == null || defaultHost.isEmpty()
+        ) {
+            throw IllegalArgumentException(
+                "[CRouter] Can not find apt argument 'moduleName', 'defaultScheme' or 'defaultHost', check if has add the code like this in module's build.gradle:\n" +
+                        "    In Kotlin:\n" +
+                        "    \n" +
+                        "    kapt {\n" +
+                        "        arguments {\n" +
+                        "          arg(\"moduleName\", project.name)\n" +
+                        "          arg(\"defaultScheme\", 'scheme')\n" +
+                        "          arg(\"defaultHost\", 'host')\n" +
+                        "        }\n" +
+                        "    }\n"
+            )
         }
 
         this.moduleName = moduleName
@@ -66,7 +69,10 @@ class RouterProcessor : AbstractProcessor() {
         return SourceVersion.latestSupported()
     }
 
-    override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
+    override fun process(
+        annotations: MutableSet<out TypeElement>?,
+        roundEnv: RoundEnvironment
+    ): Boolean {
         val routerElements = roundEnv.getElementsAnnotatedWith(Router::class.java)
         return parseRouter(routerElements)
     }
@@ -84,20 +90,24 @@ class RouterProcessor : AbstractProcessor() {
         /**
          * Param type: Set<Router>
          */
-        val inputMapTypeName = ParameterizedTypeName.get(ClassName.get(Set::class.java), ClassName.get(Route::class.java))
+        val inputMapTypeName = ParameterizedTypeName.get(
+            ClassName.get(Set::class.java),
+            ClassName.get(Route::class.java)
+        )
 
         /**
          * Param name: routerSet
          */
-        val groupParamSpec = ParameterSpec.builder(inputMapTypeName, ProcessorUtils.PARAM_NAME).build()
+        val groupParamSpec =
+            ParameterSpec.builder(inputMapTypeName, ProcessorUtils.PARAM_NAME).build()
 
         /**
          * Method: @Override public void loadRouter(Set<Route> routerSet)
          */
         val loadRouterMethodBuilder = MethodSpec.methodBuilder(ProcessorUtils.METHOD_NAME)
-                .addAnnotation(Override::class.java)
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(groupParamSpec)
+            .addAnnotation(Override::class.java)
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(groupParamSpec)
 
         for (element in routerElements) {
             val typeMirror = element.asType()
@@ -113,23 +123,27 @@ class RouterProcessor : AbstractProcessor() {
                 /**
                  * Statement: routerSet.add(RouterBuilder.buildRouter(url, needLogin, target));
                  */
-                loadRouterMethodBuilder.addStatement("\$N.add(\$T.buildRouter(\$N, \$N, \$T.class))", ProcessorUtils.PARAM_NAME,
-                        routerBuilderCn, routerUrl, router.needLogin.toString(), activityCn)
+                loadRouterMethodBuilder.addStatement(
+                    "\$N.add(\$T.buildRouter(\$N, \$N, \$T.class))", ProcessorUtils.PARAM_NAME,
+                    routerBuilderCn, routerUrl, router.needLogin.toString(), activityCn
+                )
             }
         }
 
         /**
          * Write to file
          */
-        JavaFile.builder(ProcessorUtils.PACKAGE_NAME,
-                TypeSpec.classBuilder("RouterLoader_$moduleName")
-                        .addJavadoc(ProcessorUtils.JAVADOC)
-                        .addSuperinterface(ClassName.get(RouterLoader::class.java))
-                        .addModifiers(Modifier.PUBLIC)
-                        .addMethod(loadRouterMethodBuilder.build())
-                        .build())
+        JavaFile.builder(
+            ProcessorUtils.PACKAGE_NAME,
+            TypeSpec.classBuilder("RouterLoader\$$moduleName")
+                .addJavadoc(ProcessorUtils.JAVADOC)
+                .addSuperinterface(ClassName.get(RouterLoader::class.java))
+                .addModifiers(Modifier.PUBLIC)
+                .addMethod(loadRouterMethodBuilder.build())
                 .build()
-                .writeTo(filer)
+        )
+            .build()
+            .writeTo(filer)
 
         return true
     }
