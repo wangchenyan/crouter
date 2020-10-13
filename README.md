@@ -47,9 +47,9 @@ buildscript {
 
 dependencies {
     ...
-    kapt 'com.github.wangchenyan.crouter:crouter-compiler:1.1.1'
-    implementation 'com.github.wangchenyan.crouter:crouter-annotation:1.1.1'
-    implementation 'com.github.wangchenyan.crouter:crouter-api:1.1.1'
+    kapt 'com.github.wangchenyan.crouter:crouter-compiler:1.1.2'
+    implementation 'com.github.wangchenyan.crouter:crouter-annotation:1.1.2'
+    implementation 'com.github.wangchenyan.crouter:crouter-api:1.1.2'
 }
 ```
 
