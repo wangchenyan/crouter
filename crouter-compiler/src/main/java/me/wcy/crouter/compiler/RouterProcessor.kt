@@ -124,8 +124,8 @@ class RouterProcessor : AbstractProcessor() {
                  * Statement: routerSet.add(RouterBuilder.buildRouter(url, needLogin, target));
                  */
                 loadRouterMethodBuilder.addStatement(
-                    "\$N.add(\$T.buildRouter(\$N, \$N, \$T.class))", ProcessorUtils.PARAM_NAME,
-                    routerBuilderCn, routerUrl, router.needLogin.toString(), activityCn
+                    "\$N.add(\$T.buildRouter(\$N, \$T.class, \$N))", ProcessorUtils.PARAM_NAME,
+                    routerBuilderCn, routerUrl, activityCn, router.needLogin.toString()
                 )
             }
         }

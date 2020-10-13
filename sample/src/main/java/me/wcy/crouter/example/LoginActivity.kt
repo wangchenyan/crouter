@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import me.wcy.router.annotation.Router
 
 /**
@@ -18,8 +19,13 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show()
-        setResult(Activity.RESULT_OK)
-        finish()
+        AlertDialog.Builder(this)
+            .setTitle("登录")
+            .setMessage("登录成功")
+            .setPositiveButton("确定") { dialog, which ->
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
+            .show()
     }
 }

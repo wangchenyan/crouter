@@ -32,7 +32,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.6.4'
         classpath 'com.billy.android:autoregister:1.4.2'
     }
 }
@@ -47,9 +47,9 @@ buildscript {
 
 dependencies {
     ...
-    kapt 'com.github.wangchenyan.crouter:crouter-compiler:1.1.2'
-    implementation 'com.github.wangchenyan.crouter:crouter-annotation:1.1.2'
-    implementation 'com.github.wangchenyan.crouter:crouter-api:1.1.2'
+    kapt 'com.github.wangchenyan.crouter:crouter-compiler:2'
+    implementation 'com.github.wangchenyan.crouter:crouter-annotation:2'
+    implementation 'com.github.wangchenyan.crouter:crouter-api:2'
 }
 ```
 
@@ -88,7 +88,22 @@ autoregister {
 
 ## Usage
 
-1. 在 `BaseActivity` 中配置 `startActivityForResult` 回调
+1. 初始化，建议在 Application 的 onCreate，或第一个 Activity 的 onCreate 中执行
+
+```
+CRouter.init(
+    RouterClient.Builder()
+        .addInterceptor(XXXInterceptor())
+        .loginProvider(object : LoginProvider {
+            override fun login(context: Context, callback: LoginProvider.Callback) {
+                // do login
+            }
+        })
+        .build()
+)
+```
+
+2. 在 `BaseActivity` 中配置 `startActivityForResult` 回调，和 `getIntent` 包装
 
 ```
 abstract class BaseActivity : AppCompatActivity() {
@@ -99,29 +114,11 @@ abstract class BaseActivity : AppCompatActivity() {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
-}
-```
 
-2. 在使用之前设置 `LoginProvider`（如果需要的话）
-
-```
-CRouter.setLoginProvider(object : LoginProvider {
-    override fun login(context: Context, callback: LoginProvider.Callback) {
-        CRouter.with(context)
-            .url("https://host.com/login.html")
-            .startForResult(object : ResultListener {
-                override fun onActivityResult(
-                    requestCode: Int,
-                    resultCode: Int,
-                    data: Intent?
-                ) {
-                    if (resultCode == Activity.RESULT_OK) {
-                        callback.onLogin()
-                    }
-                }
-            })
+    override fun getIntent(): Intent {
+        return RouterIntent(super.getIntent())
     }
-})
+}
 ```
 
 3. 配置 Activity 路由注解

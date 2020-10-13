@@ -3,10 +3,21 @@ package me.wcy.router.annotation
 /**
  * 真正的路由信息
  */
-interface Route {
-    fun url(): String
+abstract class Route {
+    abstract fun url(): String
 
-    fun target(): Class<*>
+    abstract fun target(): Class<*>
 
-    fun needLogin(): Boolean
+    abstract fun needLogin(): Boolean
+
+    override fun hashCode(): Int {
+        return url().hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other is Route) {
+            return url() == other.url()
+        }
+        return false
+    }
 }

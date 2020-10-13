@@ -11,30 +11,24 @@ import me.wcy.router.annotation.Router
 object CRouter {
     internal const val TAG = "CRouter"
 
-    private var routerClient = RouterClient()
+    private var routerClient: RouterClient? = null
     private val routerStarter = RealRouterStarter()
     private val resultManager = ResultManager()
-    private var loginProvider: LoginProvider? = null
 
     /**
-     * 添加拦截器
+     * 初始化
      */
-    fun addInterceptor(interceptor: Interceptor) {
-        routerClient =
-            getRouterClient().newBuilder().addInterceptor(interceptor).build()
-    }
-
-    /**
-     * 设置登录提供者。设置后 [Router.needLogin] 才能生效
-     */
-    fun setLoginProvider(loginProvider: LoginProvider) {
-        this.loginProvider = loginProvider
+    fun init(routerClient: RouterClient) {
+        this.routerClient = routerClient
     }
 
     /**
      * 开始路由
      */
     fun with(context: Context?): Request.Builder {
+        if (routerClient == null) {
+            throw IllegalStateException("CRouter has not init, please init first!")
+        }
         if (context == null) {
             throw IllegalStateException("context == null")
         }
@@ -56,11 +50,14 @@ object CRouter {
      * ```
      */
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-        return getResultManager().onActivityResult(requestCode, resultCode, data)
+        return resultManager.onActivityResult(requestCode, resultCode, data)
     }
 
     internal fun getRouterClient(): RouterClient {
-        return routerClient
+        if (routerClient == null) {
+            throw IllegalStateException("CRouter has not init, please init first!")
+        }
+        return routerClient!!
     }
 
     internal fun getRouterStarter(): RouterStarter {
@@ -73,9 +70,5 @@ object CRouter {
 
     internal fun getRouterSet(): Set<Route> {
         return RouterSet.get()
-    }
-
-    internal fun getLoginProvider(): LoginProvider? {
-        return loginProvider
     }
 }

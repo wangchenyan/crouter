@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import me.wcy.router.CRouter
 import me.wcy.router.LoginProvider
 import me.wcy.router.ResultListener
+import me.wcy.router.RouterClient
 
 class MainActivity : BaseActivity(), View.OnClickListener {
 
@@ -18,7 +19,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        CRouter.setLoginProvider(object : LoginProvider {
+        val loginProvider = object : LoginProvider {
             override fun login(context: Context, callback: LoginProvider.Callback) {
                 Toast.makeText(this@MainActivity, "拦截登录", Toast.LENGTH_SHORT).show()
                 CRouter.with(context)
@@ -35,7 +36,12 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                         }
                     })
             }
-        })
+        }
+        CRouter.init(
+            RouterClient.Builder()
+                .loginProvider(loginProvider)
+                .build()
+        )
     }
 
     override fun onClick(v: View?) {

@@ -19,7 +19,7 @@ internal class RealRouterStarter : RouterStarter {
         val call = client.newCall(request)
         val response = call.execute()
 
-        val loginProvider = CRouter.getLoginProvider()
+        val loginProvider = CRouter.getRouterClient().loginProvider()
         if (response.needLogin() && loginProvider != null) {
             loginProvider.login(context, object : LoginProvider.Callback {
                 override fun onLogin() {
