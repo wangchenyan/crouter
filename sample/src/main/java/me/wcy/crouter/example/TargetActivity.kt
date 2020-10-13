@@ -9,7 +9,7 @@ import me.wcy.router.annotation.Router
 /**
  * Created by wcy on 2019-09-10.
  */
-@Router("/target\\.html", needLogin = true)
+@Router("/target\\.html")
 class TargetActivity : BaseActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
