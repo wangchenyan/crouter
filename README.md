@@ -181,6 +181,16 @@ class H5Interceptor : Interceptor {
 }
 ```
 
+在初始化时添加拦截器
+
+```
+CRouter.init(
+    RouterClient.Builder()
+        .addInterceptor(H5Interceptor())
+        .build()
+)
+```
+
 ## ProGuard
 
 无
