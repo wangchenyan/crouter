@@ -156,6 +156,31 @@ CRouter.with(this)
 
 **更多用法请参考 [sample](https://github.com/wangchenyan/crouter/tree/master/sample) 代码**
 
+## Interceptor
+
+在 CRouter 中使用拦截器和 OkHttp 的用法一致，这里以添加一个 H5 页面拦截器为例，当识别到网页链接，用内置浏览器打开
+
+```
+class H5Interceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        val uri = request.uri()
+        val response = chain.proceed(request)
+        if (response.intent() == null && uri != null && (uri.scheme == "http" || uri.scheme == "https")) {
+            val context = request.context()
+            val intent = Intent(context, BrowserActivity::class.java)
+            intent.putExtra(Extra.URL, uri.toString())
+            return Response.Builder()
+                    .context(context)
+                    .request(request)
+                    .intent(intent)
+                    .build()
+        }
+        return response
+    }
+}
+```
+
 ## ProGuard
 
 无
