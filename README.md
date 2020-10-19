@@ -9,7 +9,7 @@
 
 ## Features
 
-1. 支持直接解析标准 URL 进行跳转，并自动注入参数到目标页面中
+1. 支持直接解析标准 URL 进行跳转，参数在目标页面通过 getIntent 获取
 2. 支持多模块工程使用
 3. 支持添加多个拦截器，自定义拦截顺序
 4. Activity 自动注册（使用 [AutoRegister](https://github.com/luckybilly/AutoRegister) 实现自动注册）
