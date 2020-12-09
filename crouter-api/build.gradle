@@ -17,6 +17,7 @@ group = 'com.github.wangchenyan'
 
 android {
     compileSdkVersion Integer.parseInt(COMPILE_SDK_VERSION)
+    buildToolsVersion BUILD_TOOLS_VERSION
 
     defaultConfig {
         minSdkVersion 14
