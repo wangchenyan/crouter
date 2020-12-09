@@ -13,7 +13,10 @@ internal class RealRouterStarter : RouterStarter {
         startForResult(request, null)
     }
 
-    override fun startForResult(request: Request, listener: ResultListener?) {
+    override fun startForResult(
+        request: Request,
+        listener: ((requestCode: Int, resultCode: Int, data: Intent?) -> Unit)?
+    ) {
         val context = request.context()
         val client = CRouter.getRouterClient()
         val call = client.newCall(request)
@@ -21,17 +24,18 @@ internal class RealRouterStarter : RouterStarter {
 
         val loginProvider = CRouter.getRouterClient().loginProvider()
         if (response.needLogin() && loginProvider != null) {
-            loginProvider.login(context, object : LoginProvider.Callback {
-                override fun onLogin() {
-                    realStartActivityForResult(response, listener)
-                }
-            })
+            loginProvider.invoke(context) {
+                realStartActivityForResult(response, listener)
+            }
         } else {
             realStartActivityForResult(response, listener)
         }
     }
 
-    private fun realStartActivityForResult(response: Response, listener: ResultListener?) {
+    private fun realStartActivityForResult(
+        response: Response,
+        listener: ((requestCode: Int, resultCode: Int, data: Intent?) -> Unit)?
+    ) {
         val request = response.request()
         val context = request.context()
         if (response.intent() == null) {

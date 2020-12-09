@@ -1,5 +1,6 @@
 package me.wcy.router
 
+import android.content.Context
 import me.wcy.router.annotation.Router
 import java.util.*
 
@@ -7,8 +8,8 @@ import java.util.*
  * 路由客户端，在 CRouter 中只有一个
  */
 class RouterClient : Call.Factory {
-    internal val interceptors: MutableList<Interceptor>
-    internal val loginProvider: LoginProvider?
+    private val interceptors: MutableList<Interceptor>
+    private val loginProvider: ((context: Context, callback: () -> Unit) -> Unit)?
 
     constructor() : this(Builder())
 
@@ -25,7 +26,7 @@ class RouterClient : Call.Factory {
         return interceptors
     }
 
-    fun loginProvider(): LoginProvider? {
+    fun loginProvider(): ((context: Context, callback: () -> Unit) -> Unit)? {
         return loginProvider
     }
 
@@ -39,13 +40,13 @@ class RouterClient : Call.Factory {
 
     class Builder {
         internal val interceptors: MutableList<Interceptor> = ArrayList()
-        internal var loginProvider: LoginProvider? = null
+        internal var loginProvider: ((context: Context, callback: () -> Unit) -> Unit)? = null
 
         constructor()
 
         internal constructor(routerClient: RouterClient) {
             this.interceptors.addAll(routerClient.interceptors)
-            this.loginProvider = loginProvider
+            this.loginProvider = routerClient.loginProvider
         }
 
         fun interceptors(): List<Interceptor> {
@@ -63,7 +64,7 @@ class RouterClient : Call.Factory {
         /**
          * 设置登录提供者。设置后 [Router.needLogin] 才能生效
          */
-        fun loginProvider(loginProvider: LoginProvider): Builder {
+        fun loginProvider(loginProvider: (context: Context, callback: () -> Unit) -> Unit): Builder {
             this.loginProvider = loginProvider
             return this
         }

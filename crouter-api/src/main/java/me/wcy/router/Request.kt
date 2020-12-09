@@ -290,7 +290,19 @@ class Request internal constructor(builder: Builder) {
         /**
          * 启动请求，关注请求结果
          */
+        @Deprecated("已过时", replaceWith = ReplaceWith("Kotlin 中使用更方便的 Lambda 表达式"))
         fun startForResult(listener: ResultListener) {
+            val lambdaListener: (requestCode: Int, resultCode: Int, data: Intent?) -> Unit =
+                { requestCode, resultCode, data ->
+                    listener.onActivityResult(requestCode, resultCode, data)
+                }
+            startForResult(lambdaListener)
+        }
+
+        /**
+         * 启动请求，关注请求结果
+         */
+        fun startForResult(listener: (requestCode: Int, resultCode: Int, data: Intent?) -> Unit) {
             val request = build()
             CRouter.getRouterStarter().startForResult(request, listener)
         }
