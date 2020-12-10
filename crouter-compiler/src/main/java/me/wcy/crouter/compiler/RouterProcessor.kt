@@ -52,7 +52,7 @@ class RouterProcessor : AbstractProcessor() {
             )
         }
 
-        this.moduleName = moduleName
+        this.moduleName = ProcessorUtils.formatModuleName(moduleName)
         this.defaultScheme = defaultScheme
         this.defaultHost = defaultHost
 
