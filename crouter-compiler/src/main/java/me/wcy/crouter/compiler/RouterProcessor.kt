@@ -56,7 +56,7 @@ class RouterProcessor : AbstractProcessor() {
         this.defaultScheme = defaultScheme
         this.defaultHost = defaultHost
 
-        Log.w("[CRouter] Start to deal module ${this.moduleName}, defaultScheme=$defaultScheme, defaultHost=$defaultHost")
+        Log.i("[CRouter] Start to deal module ${this.moduleName}, defaultScheme=$defaultScheme, defaultHost=$defaultHost")
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
@@ -82,7 +82,7 @@ class RouterProcessor : AbstractProcessor() {
             return false
         }
 
-        Log.w("[CRouter] Found routers, size is ${routerElements.size}")
+        Log.i("[CRouter] Found routers, size is ${routerElements.size}")
 
         val activityType = elementUtil.getTypeElement("android.app.Activity")
         val routerBuilderCn = ClassName.get(RouterBuilder::class.java)
@@ -114,7 +114,7 @@ class RouterProcessor : AbstractProcessor() {
             val router = element.getAnnotation(Router::class.java)
 
             if (typeUtil.isSubtype(typeMirror, activityType.asType())) {
-                Log.w("[CRouter] Found activity router: $typeMirror")
+                Log.i("[CRouter] Found activity router: $typeMirror")
 
                 val activityCn = ClassName.get(element as TypeElement)
                 var routerUrl = ProcessorUtils.assembleRouterUrl(router, defaultScheme, defaultHost)

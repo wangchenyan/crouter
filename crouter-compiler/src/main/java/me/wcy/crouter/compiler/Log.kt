@@ -13,21 +13,23 @@ object Log {
         sMessenger = messager
     }
 
-    @Deprecated("NOTE 级别的日志在 Kotlin 中无法输出", ReplaceWith("Log.w()"))
     fun i(msg: String) {
-        sMessenger?.printMessage(Diagnostic.Kind.NOTE, msg)
+        sMessenger?.printMessage(Diagnostic.Kind.NOTE, msg + "\r\n")
     }
 
     fun w(msg: String) {
-        sMessenger?.printMessage(Diagnostic.Kind.WARNING, msg)
+        sMessenger?.printMessage(Diagnostic.Kind.WARNING, msg + "\r\n")
     }
 
     fun e(msg: String) {
-        sMessenger?.printMessage(Diagnostic.Kind.ERROR, msg)
+        sMessenger?.printMessage(Diagnostic.Kind.ERROR, msg + "\r\n")
     }
 
     fun e(msg: String, tr: Throwable) {
-        sMessenger?.printMessage(Diagnostic.Kind.ERROR, msg + "\n" + getStackTraceString(tr))
+        sMessenger?.printMessage(
+            Diagnostic.Kind.ERROR,
+            msg + "\r\n" + getStackTraceString(tr) + "\r\n"
+        )
     }
 
     /**
