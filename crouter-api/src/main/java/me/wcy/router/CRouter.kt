@@ -20,17 +20,11 @@ object CRouter {
 
     /**
      * 开始路由
-     * 如果需要获取页面结果，则需要使用[CRouter.with(Context)]
+     *
+     * @param context 上下文，如果需要获取页面结果则需要传入 Activity
      */
-    fun with(): Request.Builder {
-        return with(context)
-    }
-
-    /**
-     * 开始路由
-     */
-    fun with(context: Context): Request.Builder {
-        return Request.Builder().context(context)
+    fun with(context: Context? = null): Request.Builder {
+        return Request.Builder().context(context ?: this.context)
     }
 
     internal fun setContext(context: Context) {
