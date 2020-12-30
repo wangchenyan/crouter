@@ -1,1 +1,11 @@
-<manifest package="me.wcy.router" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.wcy.router">
+
+    <application>
+        <provider
+            android:name=".RouterProvider"
+            android:authorities="${applicationId}.crouter.provider"
+            android:exported="false"
+            android:multiprocess="true" />
+    </application>
+</manifest>

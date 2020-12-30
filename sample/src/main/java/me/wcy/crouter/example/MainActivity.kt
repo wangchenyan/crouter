@@ -15,7 +15,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        CRouter.init(
+        CRouter.setRouterClient(
             RouterClient.Builder()
                 .loginProvider { context, callback ->
                     Toast.makeText(this@MainActivity, "拦截登录", Toast.LENGTH_SHORT).show()

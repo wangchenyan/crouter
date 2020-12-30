@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Parcelable
 import androidx.fragment.app.Fragment
+import me.wcy.router.starter.RouterStarterFactory
 import java.io.Serializable
 import java.lang.ref.WeakReference
 
@@ -284,13 +285,14 @@ class Request internal constructor(builder: Builder) {
          */
         fun start() {
             val request = build()
-            CRouter.getRouterStarter().start(request)
+            val routerStarter = RouterStarterFactory.create(request.context())
+            routerStarter.start(request)
         }
 
         /**
          * 启动请求，关注请求结果
          */
-        @Deprecated("已过时", replaceWith = ReplaceWith("Kotlin 中使用更方便的 Lambda 表达式"))
+        @Deprecated("已过时", replaceWith = ReplaceWith("Kotlin 中使用更加方便的 Lambda 表达式"))
         fun startForResult(listener: ResultListener) {
             val lambdaListener: (requestCode: Int, resultCode: Int, data: Intent?) -> Unit =
                 { requestCode, resultCode, data ->
@@ -304,7 +306,8 @@ class Request internal constructor(builder: Builder) {
          */
         fun startForResult(listener: (requestCode: Int, resultCode: Int, data: Intent?) -> Unit) {
             val request = build()
-            CRouter.getRouterStarter().startForResult(request, listener)
+            val routerStarter = RouterStarterFactory.create(request.context())
+            routerStarter.startForResult(request, listener)
         }
     }
 }

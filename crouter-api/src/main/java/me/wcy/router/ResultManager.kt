@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Activity 结果管理器
  */
-internal class ResultManager {
+internal object ResultManager {
     private val resultMap =
         SparseArray<(requestCode: Int, resultCode: Int, data: Intent?) -> Unit>()
     private val requestCode = AtomicInteger(0)
