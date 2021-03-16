@@ -52,9 +52,9 @@ buildscript {
 
 dependencies {
     ...
-    kapt 'com.github.wangchenyan.crouter:crouter-compiler:2'
-    implementation 'com.github.wangchenyan.crouter:crouter-annotation:2'
-    implementation 'com.github.wangchenyan.crouter:crouter-api:2'
+    kapt 'com.github.wangchenyan.crouter:crouter-compiler:2.2'
+    implementation 'com.github.wangchenyan.crouter:crouter-annotation:2.2'
+    implementation 'com.github.wangchenyan.crouter:crouter-api:2.2'
 }
 ```
 
@@ -67,12 +67,8 @@ dependencies {
 // 路由配置
 kapt {
     arguments {
-        // 使用默认
+        // 模块名
         arg("moduleName", project.name)
-        // 默认 scheme
-        arg("defaultScheme", "(http|https|native|host)")
-        // 默认 host
-        arg("defaultHost", "(\\w+\\.)*host\\.com")
     }
 }
 
@@ -93,40 +89,26 @@ autoregister {
 
 ## Usage
 
-1. 初始化，建议在 Application 的 onCreate，或第一个 Activity 的 onCreate 中执行
+1. 初始化，设置路由客户端。建议在 Application 的 onCreate，或第一个 Activity 的 onCreate 中执行
 
 ```
-CRouter.init(
+CRouter.setRouterClient(
     RouterClient.Builder()
-        .addInterceptor(XXXInterceptor())
-        .loginProvider(object : LoginProvider {
-            override fun login(context: Context, callback: LoginProvider.Callback) {
-                // do login
-            }
-        })
+        // 可选，设置登录拦截器
+        .loginProvider { context, callback ->
+            CRouter.with(context)
+                .url("/login.html")
+                .startForResult { requestCode, resultCode, data ->
+                    if (resultCode == Activity.RESULT_OK) {
+                        callback.invoke()
+                    }
+                }
+        }
         .build()
 )
 ```
 
-2. 在 `BaseActivity` 中配置 `startActivityForResult` 回调，和 `getIntent` 包装
-
-```
-abstract class BaseActivity : AppCompatActivity() {
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val handle = CRouter.onActivityResult(requestCode, resultCode, data)
-        if (!handle) {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
-    override fun getIntent(): Intent {
-        return RouterIntent(super.getIntent())
-    }
-}
-```
-
-3. 配置 Activity 路由注解
+2. 配置 Activity 路由注解
 
 ```
 @Router("/target\\.html", needLogin = true)
@@ -134,10 +116,11 @@ class TargetActivity : BaseActivity() {
 }
 ```
 
-4. 尽情使用吧
+3. 尽情使用吧
 
 ```
 CRouter.with(this)
+    // url 可以传入完整链接，也可以只传 path: '/target.html'
     .url("https://host.com/target.html")
     .startForResult(object : ResultListener {
         override fun onActivityResult(
@@ -184,7 +167,7 @@ class H5Interceptor : Interceptor {
 在初始化时添加拦截器
 
 ```
-CRouter.init(
+CRouter.setRouterClient(
     RouterClient.Builder()
         .addInterceptor(H5Interceptor())
         .build()
