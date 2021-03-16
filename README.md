@@ -10,11 +10,11 @@
 ## Features
 
 1. 支持直接解析标准 URL 进行跳转，参数在目标页面通过 getIntent 获取
-2. 支持多模块工程使用
-3. 支持添加多个拦截器，自定义拦截顺序
-4. Activity 自动注册（使用 [AutoRegister](https://github.com/luckybilly/AutoRegister) 实现自动注册）
-5. 自动处理 `startActivityForResult` 回调
-6. 支持获取 Fragment
+2. 使用正则匹配 path，更加灵活
+3. 支持多模块工程使用
+4. 支持添加多个拦截器，自定义拦截顺序
+5. Activity 自动注册（使用 [AutoRegister](https://github.com/luckybilly/AutoRegister) 实现自动注册）
+6. 自动处理 `startActivityForResult` 回调
 7. 支持 Kotlin
 
 ## Change Log
@@ -108,15 +108,26 @@ CRouter.setRouterClient(
 )
 ```
 
-2. 配置 Activity 路由注解
+2. 在 `BaseActivity` 中配置 `getIntent` 包装
 
 ```
+abstract class BaseActivity : AppCompatActivity() {
+    override fun getIntent(): Intent {
+        return RouterIntent(super.getIntent())
+    }
+}
+```
+
+3. 配置 Activity 路由注解
+
+```
+// path 使用正则匹配，注意转义
 @Router("/target\\.html", needLogin = true)
 class TargetActivity : BaseActivity() {
 }
 ```
 
-3. 尽情使用吧
+4. 尽情使用吧
 
 ```
 // 不关心结果
