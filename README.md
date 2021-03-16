@@ -119,22 +119,21 @@ class TargetActivity : BaseActivity() {
 3. 尽情使用吧
 
 ```
+// 不关心结果
 CRouter.with(this)
     // url 可以传入完整链接，也可以只传 path: '/target.html'
     .url("https://host.com/target.html")
-    .startForResult(object : ResultListener {
-        override fun onActivityResult(
-            requestCode: Int,
-            resultCode: Int,
-            data: Intent?
-        ) {
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                val value = data.extras?.getString("key")
-                Toast.makeText(this@MainActivity, "跳转取值：$value", Toast.LENGTH_SHORT)
-                    .show()
-            }
+    .start()
+
+// 关心结果
+CRouter.with(this)
+    .url("/target.html")
+    .startForResult { requestCode, resultCode, data ->
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            val value = data.extras?.getString("key")
+            alert("跳转取值", value)
         }
-    })
+    }
 ```
 
 **更多用法请参考 [sample](https://github.com/wangchenyan/crouter/tree/master/sample) 代码**
