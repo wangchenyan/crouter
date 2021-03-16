@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RouterBuilder {
 
-    public static Route buildRouter(String url, Class target, boolean needLogin) {
+    public static Route buildRouter(String path, Class target, boolean needLogin) {
         return new Route() {
             @NotNull
             @Override
-            public String url() {
-                return url;
+            public String path() {
+                return path;
             }
 
             @NotNull

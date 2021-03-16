@@ -11,14 +11,6 @@ annotation class Router(
      */
     val value: String,
     /**
-     * URL scheme，不包含 "://"，例如 "http"，支持正则表达式，注意需要转义
-     */
-    val scheme: String = "",
-    /**
-     * URL host，不包含 "/"，例如 "www\\.google\\.com"，支持正则表达式，注意需要转义
-     */
-    val host: String = "",
-    /**
      * 是否需要登录，默认不需要
      *
      * 需要调用 [RouterClient.Builder().loginProvider()] 才能生效

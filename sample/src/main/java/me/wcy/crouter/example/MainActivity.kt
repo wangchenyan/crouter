@@ -20,7 +20,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 .loginProvider { context, callback ->
                     Toast.makeText(this@MainActivity, "拦截登录", Toast.LENGTH_SHORT).show()
                     CRouter.with(context)
-                        .url("https://host.com/login.html")
+                        .url("/login.html")
                         .startForResult { requestCode, resultCode, data ->
                             if (resultCode == Activity.RESULT_OK) {
                                 callback.invoke()
@@ -35,7 +35,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         when (v) {
             button1 -> {
                 CRouter.with(this)
-                    .url("https://host.com/target.html")
+                    .url("/target.html")
                     .startForResult { requestCode, resultCode, data ->
                         if (resultCode == Activity.RESULT_OK && data != null) {
                             val value = data.extras?.getString("key")
@@ -45,7 +45,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             }
             button2 -> {
                 CRouter.with(this)
-                    .url("https://host.com/target.html")
+                    .url("/target.html")
                     .needLogin(true)
                     .startForResult { requestCode, resultCode, data ->
                         if (resultCode == Activity.RESULT_OK && data != null) {

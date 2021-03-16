@@ -31,10 +31,6 @@ kapt {
     arguments {
         // 使用默认
         arg("moduleName", project.name)
-        // 默认 scheme
-        arg("defaultScheme", "(http|https|native|host)")
-        // 默认 host
-        arg("defaultHost", "(\\w+\\.)*host\\.com")
     }
 }
 

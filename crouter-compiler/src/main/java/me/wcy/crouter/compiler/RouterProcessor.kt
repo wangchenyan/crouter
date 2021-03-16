@@ -20,8 +20,6 @@ class RouterProcessor : AbstractProcessor() {
     private lateinit var elementUtil: Elements
     private lateinit var typeUtil: Types
     private lateinit var moduleName: String
-    private lateinit var defaultScheme: String
-    private lateinit var defaultHost: String
 
     override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
@@ -32,31 +30,22 @@ class RouterProcessor : AbstractProcessor() {
         Log.setLogger(processingEnv.messager)
 
         val moduleName = processingEnv.options["moduleName"]
-        val defaultScheme = processingEnv.options["defaultScheme"]
-        val defaultHost = processingEnv.options["defaultHost"]
-        if (moduleName == null || moduleName.isEmpty()
-            || defaultScheme == null || defaultScheme.isEmpty()
-            || defaultHost == null || defaultHost.isEmpty()
-        ) {
+        if (moduleName == null || moduleName.isEmpty()) {
             throw IllegalArgumentException(
-                "[CRouter] Can not find apt argument 'moduleName', 'defaultScheme' or 'defaultHost', check if has add the code like this in module's build.gradle:\n" +
+                "[CRouter] Can not find apt argument 'moduleName', check if has add the code like this in module's build.gradle:\n" +
                         "    In Kotlin:\n" +
                         "    \n" +
                         "    kapt {\n" +
                         "        arguments {\n" +
                         "          arg(\"moduleName\", project.name)\n" +
-                        "          arg(\"defaultScheme\", 'scheme')\n" +
-                        "          arg(\"defaultHost\", 'host')\n" +
                         "        }\n" +
                         "    }\n"
             )
         }
 
         this.moduleName = ProcessorUtils.formatModuleName(moduleName)
-        this.defaultScheme = defaultScheme
-        this.defaultHost = defaultHost
 
-        Log.i("[CRouter] Start to deal module ${this.moduleName}, defaultScheme=$defaultScheme, defaultHost=$defaultHost")
+        Log.i("[CRouter] Start to deal module ${this.moduleName}")
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
@@ -117,15 +106,15 @@ class RouterProcessor : AbstractProcessor() {
                 Log.i("[CRouter] Found activity router: $typeMirror")
 
                 val activityCn = ClassName.get(element as TypeElement)
-                var routerUrl = ProcessorUtils.assembleRouterUrl(router, defaultScheme, defaultHost)
-                routerUrl = ProcessorUtils.escapeUrl(routerUrl)
+                var routerPath = ProcessorUtils.getRouterPath(router)
+                routerPath = ProcessorUtils.escapePath(routerPath)
 
                 /**
                  * Statement: routerSet.add(RouterBuilder.buildRouter(url, needLogin, target));
                  */
                 loadRouterMethodBuilder.addStatement(
                     "\$N.add(\$T.buildRouter(\$N, \$T.class, \$N))", ProcessorUtils.PARAM_NAME,
-                    routerBuilderCn, routerUrl, activityCn, router.needLogin.toString()
+                    routerBuilderCn, routerPath, activityCn, router.needLogin.toString()
                 )
             }
         }
