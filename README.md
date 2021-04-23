@@ -32,14 +32,17 @@
 ```
 // root project build.gradle
 buildscript {
-    repositories {
-        jcenter()
-    }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.4'
+        ...
         classpath 'com.billy.android:autoregister:1.4.2'
     }
+}
+
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
 }
 ```
 
