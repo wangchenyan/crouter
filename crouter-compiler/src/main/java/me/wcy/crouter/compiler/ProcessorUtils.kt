@@ -15,15 +15,24 @@ object ProcessorUtils {
         return moduleName.replace('-', '_')
     }
 
-    fun getRouterPath(router: Router): String {
+    fun assembleRouterUrl(router: Router, defaultScheme: String, defaultHost: String): String {
+        val scheme = if (router.scheme.isEmpty()) defaultScheme else router.scheme
+        val host = if (router.host.isEmpty()) defaultHost else router.host
         val path = router.value
+        if (scheme.contains(":") || scheme.contains("/")) {
+            throw IllegalArgumentException("[CRouter] Scheme '$scheme' must not be null and must not contains ':' or '/'")
+        }
+        if (host.contains('/')) {
+            throw IllegalArgumentException("[CRouter] Host '$host' must not be null and must not contains '/'")
+        }
         if (path.isNotEmpty() && !path.startsWith('/')) {
             throw IllegalArgumentException("[CRouter] Path '$path' must be '' or start with '/'")
         }
-        return path
+
+        return "$scheme://$host$path"
     }
 
-    fun escapePath(url: String): String {
+    fun escapeUrl(url: String): String {
         return "\"" + url.replace("\\", "\\\\") + "\""
     }
 }

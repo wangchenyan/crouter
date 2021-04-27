@@ -4,7 +4,7 @@ import android.content.Intent
 import me.wcy.router.CRouter
 import me.wcy.router.Interceptor
 import me.wcy.router.Response
-import me.wcy.router.RouterMatcher
+import me.wcy.router.RouterUtils
 
 /**
  * URI 拦截器
@@ -17,7 +17,7 @@ class UriInterceptor : Interceptor {
         uri?.let {
             val routerSet = CRouter.getRouterSet()
             for (router in routerSet) {
-                if (RouterMatcher.match(router, uri)) {
+                if (RouterUtils.match(router, uri)) {
                     val context = request.context()
                     val intent = Intent(context, router.target())
                     val extras = Intent()
