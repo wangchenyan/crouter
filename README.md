@@ -14,8 +14,7 @@
 3. 支持添加多个拦截器，自定义拦截顺序
 4. Activity 自动注册（使用 [AutoRegister](https://github.com/luckybilly/AutoRegister) 实现自动注册）
 5. 自动处理 `startActivityForResult` 回调
-6. 支持获取 Fragment
-7. 支持 Kotlin
+6. 支持 Kotlin
 
 ## Change Log
 
@@ -32,13 +31,16 @@
 ```
 // root project build.gradle
 buildscript {
-    repositories {
-        jcenter()
-    }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.4'
+        ...
         classpath 'com.billy.android:autoregister:1.4.2'
+    }
+}
+
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
     }
 }
 ```
@@ -52,9 +54,9 @@ buildscript {
 
 dependencies {
     ...
-    kapt 'com.github.wangchenyan.crouter:crouter-compiler:2'
-    implementation 'com.github.wangchenyan.crouter:crouter-annotation:2'
-    implementation 'com.github.wangchenyan.crouter:crouter-api:2'
+    kapt 'com.github.wangchenyan.crouter:crouter-compiler:2.1'
+    implementation 'com.github.wangchenyan.crouter:crouter-annotation:2.1'
+    implementation 'com.github.wangchenyan.crouter:crouter-api:2.1'
 }
 ```
 
@@ -67,10 +69,10 @@ dependencies {
 // 路由配置
 kapt {
     arguments {
-        // 使用默认
+        // 模块名
         arg("moduleName", project.name)
         // 默认 scheme
-        arg("defaultScheme", "(http|https|native|host)")
+        arg("defaultScheme", "(http|https|native|taobao)")
         // 默认 host
         arg("defaultHost", "(\\w+\\.)*host\\.com")
     }
@@ -93,33 +95,29 @@ autoregister {
 
 ## Usage
 
-1. 初始化，建议在 Application 的 onCreate，或第一个 Activity 的 onCreate 中执行
+1. 初始化，设置路由客户端。建议在 Application 的 onCreate，或第一个 Activity 的 onCreate 中执行
 
 ```
-CRouter.init(
+CRouter.setRouterClient(
     RouterClient.Builder()
-        .addInterceptor(XXXInterceptor())
-        .loginProvider(object : LoginProvider {
-            override fun login(context: Context, callback: LoginProvider.Callback) {
-                // do login
-            }
-        })
+        // 可选，设置登录拦截器
+        .loginProvider { context, callback ->
+            CRouter.with(context)
+                .url("scheme://host/login")
+                .startForResult { requestCode, resultCode, data ->
+                    if (resultCode == Activity.RESULT_OK) {
+                        callback.invoke()
+                    }
+                }
+        }
         .build()
 )
 ```
 
-2. 在 `BaseActivity` 中配置 `startActivityForResult` 回调，和 `getIntent` 包装
+2. 在 `BaseActivity` 中配置 `getIntent` 包装
 
 ```
 abstract class BaseActivity : AppCompatActivity() {
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val handle = CRouter.onActivityResult(requestCode, resultCode, data)
-        if (!handle) {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
     override fun getIntent(): Intent {
         return RouterIntent(super.getIntent())
     }
@@ -129,6 +127,7 @@ abstract class BaseActivity : AppCompatActivity() {
 3. 配置 Activity 路由注解
 
 ```
+// path 使用正则匹配，注意转义
 @Router("/target\\.html", needLogin = true)
 class TargetActivity : BaseActivity() {
 }
@@ -137,21 +136,20 @@ class TargetActivity : BaseActivity() {
 4. 尽情使用吧
 
 ```
+// 不关心结果
 CRouter.with(this)
-    .url("https://host.com/target.html")
-    .startForResult(object : ResultListener {
-        override fun onActivityResult(
-            requestCode: Int,
-            resultCode: Int,
-            data: Intent?
-        ) {
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                val value = data.extras?.getString("key")
-                Toast.makeText(this@MainActivity, "跳转取值：$value", Toast.LENGTH_SHORT)
-                    .show()
-            }
+    .url("scheme://host/target.html")
+    .start()
+
+// 关心结果
+CRouter.with(this)
+    .url("scheme://host/target.html")
+    .startForResult { requestCode, resultCode, data ->
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            val value = data.extras?.getString("key")
+            alert("跳转取值", value)
         }
-    })
+    }
 ```
 
 **更多用法请参考 [sample](https://github.com/wangchenyan/crouter/tree/master/sample) 代码**
@@ -184,7 +182,7 @@ class H5Interceptor : Interceptor {
 在初始化时添加拦截器
 
 ```
-CRouter.init(
+CRouter.setRouterClient(
     RouterClient.Builder()
         .addInterceptor(H5Interceptor())
         .build()
