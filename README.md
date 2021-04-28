@@ -28,18 +28,18 @@
 
 1. Add gradle dependency
 
-```
+```groovy
 // root project build.gradle
 buildscript {
     dependencies {
-        ...
+        // ...
         classpath 'com.billy.android:autoregister:1.4.2'
     }
 }
 
 allprojects {
     repositories {
-        ...
+        // ...
         maven { url 'https://jitpack.io' }
     }
 }
@@ -47,13 +47,13 @@ allprojects {
 
 2. Add library dependency
 
-```
+```groovy
 // module build.gradle
 
-...
+// ...
 
 dependencies {
-    ...
+    // ...
     kapt 'com.github.wangchenyan.crouter:crouter-compiler:2.1'
     implementation 'com.github.wangchenyan.crouter:crouter-annotation:2.1'
     implementation 'com.github.wangchenyan.crouter:crouter-api:2.1'
@@ -62,9 +62,9 @@ dependencies {
 
 3. Config
 
-```
+```groovy
 // module build.gradle
-...
+// ...
 
 // 路由配置
 kapt {
@@ -90,14 +90,14 @@ autoregister {
     ]
 }
 
-...
+// ...
 ```
 
 ## Usage
 
 1. 初始化，设置路由客户端。建议在 Application 的 onCreate，或第一个 Activity 的 onCreate 中执行
 
-```
+```kotlin
 CRouter.setRouterClient(
     RouterClient.Builder()
         // 可选，设置登录拦截器
@@ -116,7 +116,7 @@ CRouter.setRouterClient(
 
 2. 在 `BaseActivity` 中配置 `getIntent` 包装
 
-```
+```kotlin
 abstract class BaseActivity : AppCompatActivity() {
     override fun getIntent(): Intent {
         return RouterIntent(super.getIntent())
@@ -126,7 +126,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
 3. 配置 Activity 路由注解
 
-```
+```kotlin
 // path 使用正则匹配，注意转义
 @Router("/target\\.html", needLogin = true)
 class TargetActivity : BaseActivity() {
@@ -135,7 +135,7 @@ class TargetActivity : BaseActivity() {
 
 4. 尽情使用吧
 
-```
+```kotlin
 // 不关心结果
 CRouter.with(this)
     .url("scheme://host/target.html")
@@ -158,7 +158,7 @@ CRouter.with(this)
 
 在 CRouter 中使用拦截器和 OkHttp 的用法一致，这里以添加一个 H5 页面拦截器为例，当识别到网页链接，用内置浏览器打开
 
-```
+```kotlin
 class H5Interceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -181,7 +181,7 @@ class H5Interceptor : Interceptor {
 
 在初始化时添加拦截器
 
-```
+```kotlin
 CRouter.setRouterClient(
     RouterClient.Builder()
         .addInterceptor(H5Interceptor())
