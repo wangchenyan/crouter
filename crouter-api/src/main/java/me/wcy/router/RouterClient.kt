@@ -2,7 +2,7 @@ package me.wcy.router
 
 import android.content.Context
 import me.wcy.router.annotation.Router
-import java.util.*
+import java.util.Collections
 
 /**
  * 路由客户端，在 CRouter 中只有一个
@@ -17,7 +17,7 @@ class RouterClient : Call.Factory {
         this.interceptors = Collections.unmodifiableList(ArrayList(builder.interceptors))
         this.loginProvider = builder.loginProvider
 
-        if (interceptors.contains(null)) {
+        if (interceptors.contains(null as Interceptor?)) {
             throw IllegalStateException("Null interceptor: $interceptors")
         }
     }

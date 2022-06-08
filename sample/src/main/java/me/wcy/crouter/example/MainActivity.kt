@@ -3,13 +3,15 @@ package me.wcy.crouter.example
 import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import kotlinx.android.synthetic.main.activity_main.*
 import me.wcy.router.CRouter
 import me.wcy.router.RouterClient
 
 class MainActivity : BaseActivity(), View.OnClickListener {
+    private val button1: Button by lazy { findViewById(R.id.button1) }
+    private val button2: Button by lazy { findViewById(R.id.button2) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

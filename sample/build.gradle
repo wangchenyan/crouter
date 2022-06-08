@@ -1,17 +1,15 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'auto-register'
 
 android {
     compileSdkVersion Integer.parseInt(COMPILE_SDK_VERSION)
-    buildToolsVersion BUILD_TOOLS_VERSION
 
     defaultConfig {
         applicationId "me.wcy.crouter.example"
         minSdkVersion 14
-        targetSdkVersion 28
+        targetSdkVersion 32
         versionCode 1
         versionName VERSION_NAME
     }
@@ -55,7 +53,7 @@ autoregister {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     kapt project(':crouter-compiler')
     implementation project(':crouter-annotation')
     implementation project(':crouter-api')
