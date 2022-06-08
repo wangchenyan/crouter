@@ -1,5 +1,6 @@
 package me.wcy.router.starter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -55,6 +56,7 @@ class ContextStarter(private val context: Context) :
         }
     }
 
+    @SuppressLint("WrongConstant")
     private fun buildIntent(response: Response): Intent {
         val request = response.request()
         val intent = response.intent()!!

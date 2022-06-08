@@ -14,14 +14,20 @@
 3. 支持添加多个拦截器，自定义拦截顺序
 4. Activity 自动注册（使用 [AutoRegister](https://github.com/luckybilly/AutoRegister) 实现自动注册）
 5. 自动处理 `startActivityForResult` 回调
-6. 支持 Kotlin
+6. 支持获取 Fragment
+7. 支持启动 Fragment（需要设置 `RouterClient#fragmentContainerIntent`，可参考 sample）
+8. 支持 Kotlin
 
 ## Change Log
 
 `v2`
+
 - 优化 Api 调用
+- 新增获取 Fragment
+- 新增启动 Fragment
 
 `v1`
+
 - 完成路由功能
 
 ## Dependency
@@ -54,9 +60,9 @@ allprojects {
 
 dependencies {
     // ...
-    kapt 'com.github.wangchenyan.crouter:crouter-compiler:2.1'
-    implementation 'com.github.wangchenyan.crouter:crouter-annotation:2.1'
-    implementation 'com.github.wangchenyan.crouter:crouter-api:2.1'
+    kapt "com.github.wangchenyan.crouter:crouter-compiler:${latestVersion}"
+    implementation "com.github.wangchenyan.crouter:crouter-annotation:${latestVersion}"
+    implementation "com.github.wangchenyan.crouter:crouter-api:${latestVersion}"
 }
 ```
 
@@ -82,10 +88,10 @@ kapt {
 autoregister {
     registerInfo = [
             [
-                    'scanInterface'        : 'me.wcy.router.annotation.RouterLoader',
+                    'scanInterface': 'me.wcy.router.annotation.RouterLoader',
                     'codeInsertToClassName': 'me.wcy.router.RouterSet',
-                    'registerMethodName'   : 'register',
-                    'include'              : ['me/wcy/router/annotation/loader/.*']
+                    'registerMethodName': 'register',
+                    'include': ['me/wcy/router/annotation/loader/.*']
             ]
     ]
 }
@@ -110,6 +116,8 @@ CRouter.setRouterClient(
                     }
                 }
         }
+        // 启动 Fragment 时，需要设置 Fragment 容器 Activity 的 Intent
+        .fragmentContainerIntent(Intent(this, FragmentContainerActivity::class.java))
         .build()
 )
 ```
@@ -169,10 +177,10 @@ class H5Interceptor : Interceptor {
             val intent = Intent(context, BrowserActivity::class.java)
             intent.putExtra(Extra.URL, uri.toString())
             return Response.Builder()
-                    .context(context)
-                    .request(request)
-                    .intent(intent)
-                    .build()
+                .context(context)
+                .request(request)
+                .intent(intent)
+                .build()
         }
         return response
     }

@@ -1,5 +1,6 @@
 package me.wcy.router.starter
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Fragment
 import android.content.Intent
@@ -76,6 +77,7 @@ class FragmentStarter : Fragment(), RouterStarter {
         }
     }
 
+    @SuppressLint("WrongConstant")
     private fun buildIntent(response: Response): Intent {
         val request = response.request()
         val intent = response.intent()!!

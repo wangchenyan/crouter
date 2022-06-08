@@ -1,5 +1,6 @@
 package me.wcy.router.starter
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +14,7 @@ import me.wcy.router.ResultManager
 /**
  * Created by wcy on 2020/12/30.
  */
-class SupportFragmentStarter : Fragment(), RouterStarter {
+class FragmentXStarter : Fragment(), RouterStarter {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +77,7 @@ class SupportFragmentStarter : Fragment(), RouterStarter {
         }
     }
 
+    @SuppressLint("WrongConstant")
     private fun buildIntent(response: Response): Intent {
         val request = response.request()
         val intent = response.intent()!!

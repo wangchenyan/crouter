@@ -1,12 +1,21 @@
 package me.wcy.crouter.compiler
 
 import com.google.auto.service.AutoService
-import com.squareup.javapoet.*
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.MethodSpec
+import com.squareup.javapoet.ParameterSpec
+import com.squareup.javapoet.ParameterizedTypeName
+import com.squareup.javapoet.TypeSpec
 import me.wcy.router.annotation.Route
 import me.wcy.router.annotation.Router
 import me.wcy.router.annotation.RouterBuilder
 import me.wcy.router.annotation.RouterLoader
-import javax.annotation.processing.*
+import javax.annotation.processing.AbstractProcessor
+import javax.annotation.processing.Filer
+import javax.annotation.processing.ProcessingEnvironment
+import javax.annotation.processing.Processor
+import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
@@ -85,6 +94,8 @@ class RouterProcessor : AbstractProcessor() {
         Log.i("[CRouter] Found routers, size is ${routerElements.size}")
 
         val activityType = elementUtil.getTypeElement("android.app.Activity")
+        val fragmentType = elementUtil.getTypeElement("android.app.Fragment")
+        val fragmentXType = elementUtil.getTypeElement("androidx.fragment.app.Fragment")
         val routerBuilderCn = ClassName.get(RouterBuilder::class.java)
 
         /**
@@ -113,10 +124,13 @@ class RouterProcessor : AbstractProcessor() {
             val typeMirror = element.asType()
             val router = element.getAnnotation(Router::class.java)
 
-            if (typeUtil.isSubtype(typeMirror, activityType.asType())) {
-                Log.i("[CRouter] Found activity router: $typeMirror")
+            if (typeUtil.isSubtype(typeMirror, activityType.asType())
+                || typeUtil.isSubtype(typeMirror, fragmentType.asType())
+                || typeUtil.isSubtype(typeMirror, fragmentXType.asType())
+            ) {
+                Log.i("[CRouter] Found router: $typeMirror")
 
-                val activityCn = ClassName.get(element as TypeElement)
+                val className = ClassName.get(element as TypeElement)
                 var routerUrl = ProcessorUtils.assembleRouterUrl(router, defaultScheme, defaultHost)
                 routerUrl = ProcessorUtils.escapeUrl(routerUrl)
 
@@ -125,7 +139,7 @@ class RouterProcessor : AbstractProcessor() {
                  */
                 loadRouterMethodBuilder.addStatement(
                     "\$N.add(\$T.buildRouter(\$N, \$T.class, \$N))", ProcessorUtils.PARAM_NAME,
-                    routerBuilderCn, routerUrl, activityCn, router.needLogin.toString()
+                    routerBuilderCn, routerUrl, className, router.needLogin.toString()
                 )
             }
         }

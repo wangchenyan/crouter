@@ -20,9 +20,9 @@ object RouterStarterFactory {
         if (context is FragmentActivity) {
             val supportFragmentManager = getSupportFragmentManager(context)
             var permissionSupportFragment =
-                supportFragmentManager.findFragmentByTag(FRAGMENT_TAG) as SupportFragmentStarter?
+                supportFragmentManager.findFragmentByTag(FRAGMENT_TAG) as FragmentXStarter?
             if (permissionSupportFragment == null) {
-                permissionSupportFragment = SupportFragmentStarter()
+                permissionSupportFragment = FragmentXStarter()
                 supportFragmentManager.beginTransaction()
                     .add(permissionSupportFragment, FRAGMENT_TAG)
                     .commitNowAllowingStateLoss()

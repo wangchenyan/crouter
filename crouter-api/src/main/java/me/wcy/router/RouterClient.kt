@@ -1,6 +1,7 @@
 package me.wcy.router
 
 import android.content.Context
+import android.content.Intent
 import me.wcy.router.annotation.Router
 import java.util.Collections
 
@@ -10,12 +11,14 @@ import java.util.Collections
 class RouterClient : Call.Factory {
     private val interceptors: MutableList<Interceptor>
     private val loginProvider: ((context: Context, callback: () -> Unit) -> Unit)?
+    private val fragmentContainerIntent: Intent?
 
     constructor() : this(Builder())
 
     internal constructor(builder: Builder) {
         this.interceptors = Collections.unmodifiableList(ArrayList(builder.interceptors))
         this.loginProvider = builder.loginProvider
+        this.fragmentContainerIntent = builder.fragmentContainerIntent
 
         if (interceptors.contains(null as Interceptor?)) {
             throw IllegalStateException("Null interceptor: $interceptors")
@@ -30,6 +33,10 @@ class RouterClient : Call.Factory {
         return loginProvider
     }
 
+    fun fragmentContainerIntent(): Intent? {
+        return fragmentContainerIntent
+    }
+
     override fun newCall(request: Request): Call {
         return RealCall.newRealCall(this, request)
     }
@@ -41,6 +48,7 @@ class RouterClient : Call.Factory {
     class Builder {
         internal val interceptors: MutableList<Interceptor> = ArrayList()
         internal var loginProvider: ((context: Context, callback: () -> Unit) -> Unit)? = null
+        internal var fragmentContainerIntent: Intent? = null
 
         constructor()
 
@@ -66,6 +74,14 @@ class RouterClient : Call.Factory {
          */
         fun loginProvider(loginProvider: (context: Context, callback: () -> Unit) -> Unit): Builder {
             this.loginProvider = loginProvider
+            return this
+        }
+
+        /**
+         * 启动 Fragment 时，需要设置 Fragment 容器 Activity 的 Intent
+         */
+        fun fragmentContainerIntent(intent: Intent): Builder {
+            this.fragmentContainerIntent = intent
             return this
         }
 

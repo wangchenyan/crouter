@@ -16,8 +16,8 @@ object ProcessorUtils {
     }
 
     fun assembleRouterUrl(router: Router, defaultScheme: String, defaultHost: String): String {
-        val scheme = if (router.scheme.isEmpty()) defaultScheme else router.scheme
-        val host = if (router.host.isEmpty()) defaultHost else router.host
+        val scheme = router.scheme.ifEmpty { defaultScheme }
+        val host = router.host.ifEmpty { defaultHost }
         val path = router.value
         if (scheme.contains(":") || scheme.contains("/")) {
             throw IllegalArgumentException("[CRouter] Scheme '$scheme' must not be null and must not contains ':' or '/'")

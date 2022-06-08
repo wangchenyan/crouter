@@ -1,5 +1,6 @@
 package me.wcy.router
 
+import android.app.Application
 import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
@@ -11,7 +12,10 @@ import android.net.Uri
 class RouterProvider : ContentProvider() {
 
     override fun onCreate(): Boolean {
-        CRouter.setContext(context!!)
+        val context = context
+        if (context is Application) {
+            CRouter.setContext(context)
+        }
         return true
     }
 

@@ -2,7 +2,6 @@ package me.wcy.router
 
 import android.net.Uri
 import me.wcy.router.annotation.Route
-import java.lang.IllegalArgumentException
 
 /**
  * Created by wcy on 2019/7/13.

@@ -261,13 +261,15 @@ class Request internal constructor(builder: Builder) {
         /**
          * 获取 Fragment
          */
-        fun newFragment(): Fragment? {
-            if (target != null && Fragment::class.java.isAssignableFrom(target)) {
-                val instance = target!!.newInstance() as Fragment
-                instance.arguments = extras.extras
-                return instance
-            }
-            return null
+        fun getFragmentX(): Class<out Fragment>? {
+            return FragmentFinder.findFragmentX(build())
+        }
+
+        /**
+         * 获取 Fragment
+         */
+        fun getFragment(): Class<out android.app.Fragment>? {
+            return FragmentFinder.findFragment(build())
         }
 
         /**
@@ -292,7 +294,7 @@ class Request internal constructor(builder: Builder) {
         /**
          * 启动请求，关注请求结果
          */
-        @Deprecated("已过时", replaceWith = ReplaceWith("Kotlin 中使用更加方便的 Lambda 表达式"))
+        @Deprecated("已过时", replaceWith = ReplaceWith("Kotlin 中使用更加方便的高阶函数"))
         fun startForResult(listener: ResultListener) {
             val lambdaListener: (requestCode: Int, resultCode: Int, data: Intent?) -> Unit =
                 { requestCode, resultCode, data ->
