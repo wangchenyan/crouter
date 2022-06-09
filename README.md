@@ -109,7 +109,7 @@ CRouter.setRouterClient(
         .loginProvider { context, callback ->
             CRouter.with(context)
                 .url("scheme://host/login")
-                .startForResult { requestCode, resultCode, data ->
+                .startForResult { resultCode, data ->
                     if (resultCode == Activity.RESULT_OK) {
                         callback.invoke()
                     }
@@ -151,7 +151,7 @@ CRouter.with(this)
 // 关心结果
 CRouter.with(this)
     .url("scheme://host/target.html")
-    .startForResult { requestCode, resultCode, data ->
+    .startForResult { resultCode, data ->
         if (resultCode == Activity.RESULT_OK && data != null) {
             val value = data.extras?.getString("key")
             alert("跳转取值", value)

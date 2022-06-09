@@ -7,5 +7,7 @@ import android.content.Intent
  */
 @Deprecated("已过时", replaceWith = ReplaceWith("Kotlin 中使用更方便的高阶函数"))
 interface ResultListener {
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    fun onActivityResult(resultCode: Int, data: Intent?)
 }
+
+typealias OnRouteResult = (resultCode: Int, data: Intent?) -> Unit

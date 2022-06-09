@@ -296,9 +296,8 @@ class Request internal constructor(builder: Builder) {
          */
         @Deprecated("已过时", replaceWith = ReplaceWith("Kotlin 中使用更加方便的高阶函数"))
         fun startForResult(listener: ResultListener) {
-            val lambdaListener: (requestCode: Int, resultCode: Int, data: Intent?) -> Unit =
-                { requestCode, resultCode, data ->
-                    listener.onActivityResult(requestCode, resultCode, data)
+            val lambdaListener: OnRouteResult = { resultCode, data ->
+                    listener.onActivityResult(resultCode, data)
                 }
             startForResult(lambdaListener)
         }
@@ -306,7 +305,7 @@ class Request internal constructor(builder: Builder) {
         /**
          * 启动请求，关注请求结果
          */
-        fun startForResult(listener: (requestCode: Int, resultCode: Int, data: Intent?) -> Unit) {
+        fun startForResult(listener: OnRouteResult) {
             val request = build()
             val routerStarter = RouterStarterFactory.create(request.context())
             routerStarter.startForResult(request, listener)

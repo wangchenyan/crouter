@@ -1,6 +1,6 @@
 package me.wcy.router.starter
 
-import android.content.Intent
+import me.wcy.router.OnRouteResult
 import me.wcy.router.Request
 
 /**
@@ -12,6 +12,6 @@ interface RouterStarter {
 
     fun startForResult(
         request: Request,
-        listener: ((requestCode: Int, resultCode: Int, data: Intent?) -> Unit)?
+        listener: OnRouteResult?
     )
 }
