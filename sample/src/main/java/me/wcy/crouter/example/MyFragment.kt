@@ -1,5 +1,6 @@
 package me.wcy.crouter.example
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -25,15 +26,16 @@ class MyFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_my, container, false)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val text: TextView = view.findViewById(R.id.text)
         val button: Button = view.findViewById(R.id.button)
         val map = mutableMapOf<String, Any?>()
         arguments?.keySet()?.forEach {
-            map.put(it, arguments?.get(it))
+            map[it] = arguments?.get(it)
         }
-        text.text = map.toString()
+        text.text = "arguments: $map"
         button.setOnClickListener {
             val data = Intent()
             data.putExtra("key", "value from MyFragment")

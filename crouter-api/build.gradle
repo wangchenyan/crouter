@@ -28,6 +28,6 @@ afterEvaluate {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation project(':crouter-annotation')
+    api project(':crouter-annotation')
     compileOnly 'androidx.appcompat:appcompat:1.4.2'
 }

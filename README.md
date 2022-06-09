@@ -61,7 +61,6 @@ allprojects {
 dependencies {
     // ...
     kapt "com.github.wangchenyan.crouter:crouter-compiler:${latestVersion}"
-    implementation "com.github.wangchenyan.crouter:crouter-annotation:${latestVersion}"
     implementation "com.github.wangchenyan.crouter:crouter-api:${latestVersion}"
 }
 ```

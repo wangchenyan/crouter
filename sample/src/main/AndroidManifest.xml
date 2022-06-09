@@ -28,7 +28,7 @@
             android:label="LoginActivity" />
         <activity
             android:name=".FragmentContainerActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/AppTheme.NoTitle" />
     </application>
 
 </manifest>

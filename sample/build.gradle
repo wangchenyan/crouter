@@ -55,6 +55,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.4.2'
     kapt project(':crouter-compiler')
-    implementation project(':crouter-annotation')
     implementation project(':crouter-api')
 }
