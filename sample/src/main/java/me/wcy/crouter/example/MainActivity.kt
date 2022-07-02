@@ -30,7 +30,9 @@ class MainActivity : BaseActivity() {
                             }
                         }
                 }
-                .fragmentContainerIntent(Intent(this, FragmentContainerActivity::class.java))
+                .fragmentContainerIntentProvider {
+                    Intent(it, FragmentContainerActivity::class.java)
+                }
                 .build()
         )
 

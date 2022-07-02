@@ -41,9 +41,9 @@ class UriInterceptor : Interceptor {
     private fun getIntent(context: Context, uri: Uri, target: Class<*>, extras: Intent): Intent {
         val intent: Intent
         if (FragmentFinder.isAnyFragment(target)
-            && CRouter.getRouterClient().fragmentContainerIntent() != null
+            && CRouter.getRouterClient().fragmentContainerIntentProvider() != null
         ) {
-            intent = CRouter.getRouterClient().fragmentContainerIntent()!!
+            intent = CRouter.getRouterClient().fragmentContainerIntentProvider()!!.invoke(context)
             intent.putExtras(extras)
             intent.putExtra(CRouter.CROUTER_KEY_FRAGMENT_URI, uri)
         } else {

@@ -11,14 +11,14 @@ import java.util.Collections
 class RouterClient : Call.Factory {
     private val interceptors: MutableList<Interceptor>
     private val loginProvider: ((context: Context, callback: () -> Unit) -> Unit)?
-    private val fragmentContainerIntent: Intent?
+    private val fragmentContainerIntentProvider: ((context: Context) -> Intent)?
 
     constructor() : this(Builder())
 
     internal constructor(builder: Builder) {
         this.interceptors = Collections.unmodifiableList(ArrayList(builder.interceptors))
         this.loginProvider = builder.loginProvider
-        this.fragmentContainerIntent = builder.fragmentContainerIntent
+        this.fragmentContainerIntentProvider = builder.fragmentContainerIntentProvider
 
         if (interceptors.contains(null as Interceptor?)) {
             throw IllegalStateException("Null interceptor: $interceptors")
@@ -33,8 +33,8 @@ class RouterClient : Call.Factory {
         return loginProvider
     }
 
-    fun fragmentContainerIntent(): Intent? {
-        return fragmentContainerIntent
+    fun fragmentContainerIntentProvider(): ((context: Context) -> Intent)? {
+        return fragmentContainerIntentProvider
     }
 
     override fun newCall(request: Request): Call {
@@ -48,7 +48,7 @@ class RouterClient : Call.Factory {
     class Builder {
         internal val interceptors: MutableList<Interceptor> = ArrayList()
         internal var loginProvider: ((context: Context, callback: () -> Unit) -> Unit)? = null
-        internal var fragmentContainerIntent: Intent? = null
+        internal var fragmentContainerIntentProvider: ((context: Context) -> Intent)? = null
 
         constructor()
 
@@ -80,8 +80,8 @@ class RouterClient : Call.Factory {
         /**
          * 启动 Fragment 时，需要设置 Fragment 容器 Activity 的 Intent
          */
-        fun fragmentContainerIntent(intent: Intent): Builder {
-            this.fragmentContainerIntent = intent
+        fun fragmentContainerIntentProvider(provider: (context: Context) -> Intent): Builder {
+            this.fragmentContainerIntentProvider = provider
             return this
         }
 
