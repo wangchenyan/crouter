@@ -1,6 +1,5 @@
 package me.wcy.crouter.example
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -24,8 +23,8 @@ class MainActivity : BaseActivity() {
                     Toast.makeText(this@MainActivity, "拦截登录", Toast.LENGTH_SHORT).show()
                     CRouter.with(context)
                         .url("https://host.com/login.html")
-                        .startForResult { resultCode, data ->
-                            if (resultCode == Activity.RESULT_OK) {
+                        .startForResult { it ->
+                            if (it.isSuccess()) {
                                 callback.invoke()
                             }
                         }
@@ -39,9 +38,9 @@ class MainActivity : BaseActivity() {
         button1.setOnClickListener {
             CRouter.with(this)
                 .url("https://host.com/target.html")
-                .startForResult { resultCode, data ->
-                    if (resultCode == Activity.RESULT_OK && data != null) {
-                        val value = data.extras?.getString("key")
+                .startForResult { it ->
+                    if (it.isSuccess("key")) {
+                        val value = it.data?.getStringExtra("key")
                         alert("跳转取值", value)
                     }
                 }
@@ -50,9 +49,9 @@ class MainActivity : BaseActivity() {
             CRouter.with(this)
                 .url("https://host.com/target.html")
                 .needLogin(true)
-                .startForResult { resultCode, data ->
-                    if (resultCode == Activity.RESULT_OK && data != null) {
-                        val value = data.extras?.getString("key")
+                .startForResult { it ->
+                    if (it.isSuccess("key")) {
+                        val value = it.data?.getStringExtra("key")
                         alert("跳转取值", value)
                     }
                 }
@@ -60,9 +59,9 @@ class MainActivity : BaseActivity() {
         button3.setOnClickListener {
             CRouter.with(this)
                 .url("https://host.com/fragment/my?key1=value1&key2=value2")
-                .startForResult { resultCode, data ->
-                    if (resultCode == Activity.RESULT_OK && data != null) {
-                        val value = data.extras?.getString("key")
+                .startForResult { it ->
+                    if (it.isSuccess("key")) {
+                        val value = it.data?.getStringExtra("key")
                         alert("跳转取值", value)
                     }
                 }

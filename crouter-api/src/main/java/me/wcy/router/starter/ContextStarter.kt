@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import me.wcy.router.CRouter
-import me.wcy.router.OnRouteResult
+import me.wcy.router.OnRouteResultListener
 import me.wcy.router.Request
 import me.wcy.router.Response
 
@@ -21,7 +21,7 @@ class ContextStarter(private val context: Context) :
 
     override fun startForResult(
         request: Request,
-        listener: OnRouteResult?
+        listener: OnRouteResultListener?
     ) {
         if (listener != null) {
             throw IllegalStateException("start for result should use activity context!")

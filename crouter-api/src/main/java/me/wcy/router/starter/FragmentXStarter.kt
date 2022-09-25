@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import me.wcy.router.CRouter
-import me.wcy.router.OnRouteResult
+import me.wcy.router.OnRouteResultListener
 import me.wcy.router.Request
 import me.wcy.router.Response
 import me.wcy.router.ResultManager
@@ -33,7 +33,7 @@ class FragmentXStarter : Fragment(), RouterStarter {
 
     override fun startForResult(
         request: Request,
-        listener: OnRouteResult?
+        listener: OnRouteResultListener?
     ) {
         val context = request.context()
         val client = CRouter.getRouterClient()
@@ -51,7 +51,7 @@ class FragmentXStarter : Fragment(), RouterStarter {
 
     private fun realStartActivityForResult(
         response: Response,
-        listener: OnRouteResult?
+        listener: OnRouteResultListener?
     ) {
         val request = response.request()
         val context = request.context()

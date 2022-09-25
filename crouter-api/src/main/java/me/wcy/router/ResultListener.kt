@@ -11,3 +11,5 @@ interface ResultListener {
 }
 
 typealias OnRouteResult = (resultCode: Int, data: Intent?) -> Unit
+
+typealias OnRouteResultListener = (routeResult: RouteResult) -> Unit
