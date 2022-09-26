@@ -19,6 +19,7 @@ class MainActivity : BaseActivity() {
 
         CRouter.setRouterClient(
             RouterClient.Builder()
+                .baseUrl("https://host.com")
                 .loginProvider { context, callback ->
                     Toast.makeText(this@MainActivity, "拦截登录", Toast.LENGTH_SHORT).show()
                     CRouter.with(context)
@@ -37,7 +38,7 @@ class MainActivity : BaseActivity() {
 
         button1.setOnClickListener {
             CRouter.with(this)
-                .url("https://host.com/target.html")
+                .url("/target.html")
                 .startForResult { it ->
                     if (it.isSuccess("key")) {
                         val value = it.data?.getStringExtra("key")

@@ -10,6 +10,7 @@ import java.util.Collections
  */
 class RouterClient : Call.Factory {
     private val interceptors: MutableList<Interceptor>
+    private val baseUrl: String?
     private val loginProvider: ((context: Context, callback: () -> Unit) -> Unit)?
     private val fragmentContainerIntentProvider: ((context: Context) -> Intent)?
 
@@ -17,6 +18,7 @@ class RouterClient : Call.Factory {
 
     internal constructor(builder: Builder) {
         this.interceptors = Collections.unmodifiableList(ArrayList(builder.interceptors))
+        this.baseUrl = builder.baseUrl
         this.loginProvider = builder.loginProvider
         this.fragmentContainerIntentProvider = builder.fragmentContainerIntentProvider
 
@@ -28,6 +30,8 @@ class RouterClient : Call.Factory {
     fun interceptors(): List<Interceptor> {
         return interceptors
     }
+
+    fun baseUrl() = baseUrl
 
     fun loginProvider(): ((context: Context, callback: () -> Unit) -> Unit)? {
         return loginProvider
@@ -47,6 +51,7 @@ class RouterClient : Call.Factory {
 
     class Builder {
         internal val interceptors: MutableList<Interceptor> = ArrayList()
+        internal var baseUrl: String? = null
         internal var loginProvider: ((context: Context, callback: () -> Unit) -> Unit)? = null
         internal var fragmentContainerIntentProvider: ((context: Context) -> Intent)? = null
 
@@ -66,6 +71,11 @@ class RouterClient : Call.Factory {
          */
         fun addInterceptor(interceptor: Interceptor): Builder {
             interceptors.add(interceptor)
+            return this
+        }
+
+        fun baseUrl(baseUrl: String): Builder {
+            this.baseUrl = baseUrl
             return this
         }
 

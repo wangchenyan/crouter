@@ -17,8 +17,8 @@ object CRouter {
     /**
      * 设置路由客户端，不设置则使用默认客户端
      */
-    fun setRouterClient(routerClient: RouterClient) {
-        this.routerClient = routerClient
+    fun setRouterClient(client: RouterClient) {
+        this.routerClient = client
     }
 
     /**
