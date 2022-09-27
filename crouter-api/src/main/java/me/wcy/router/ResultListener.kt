@@ -10,6 +10,7 @@ interface ResultListener {
     fun onActivityResult(resultCode: Int, data: Intent?)
 }
 
+@Deprecated("已过时", replaceWith = ReplaceWith("OnRouteResultListener"))
 typealias OnRouteResult = (resultCode: Int, data: Intent?) -> Unit
 
 typealias OnRouteResultListener = (routeResult: RouteResult) -> Unit
