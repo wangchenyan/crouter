@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * Activity 结果管理器
  */
 internal object ResultManager {
-    private val resultMap = SparseArray<OnRouteResultListener>()
+    private val resultMap = SparseArray<RouteResultListener>()
     private val requestCode = AtomicInteger(0)
 
     fun genRequestCode(): Int {
@@ -18,7 +18,7 @@ internal object ResultManager {
 
     fun add(
         requestCode: Int,
-        listener: OnRouteResultListener
+        listener: RouteResultListener
     ) {
         resultMap.put(requestCode, listener)
     }

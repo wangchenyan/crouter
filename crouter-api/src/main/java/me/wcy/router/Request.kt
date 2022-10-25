@@ -294,30 +294,7 @@ class Request internal constructor(builder: Builder) {
         /**
          * 启动请求，关注请求结果
          */
-        @Deprecated("已过时", replaceWith = ReplaceWith("Kotlin 中使用更加方便的高阶函数"))
-        fun startForResult(listener: ResultListener) {
-            val lambdaListener: OnRouteResultListener = {
-                listener.onActivityResult(it.resultCode, it.data)
-            }
-            startForResult(lambdaListener)
-        }
-
-        /**
-         * 启动请求，关注请求结果
-         */
-        @Deprecated("已过时", replaceWith = ReplaceWith("[startForResult(OnRouteResultListener)]"))
-        fun startForResult(listener: OnRouteResult) {
-            val request = build()
-            val routerStarter = RouterStarterFactory.create(request.context())
-            routerStarter.startForResult(request) {
-                listener(it.resultCode, it.data)
-            }
-        }
-
-        /**
-         * 启动请求，关注请求结果
-         */
-        fun startForResult(listener: OnRouteResultListener) {
+        fun startForResult(listener: RouteResultListener) {
             val request = build()
             val routerStarter = RouterStarterFactory.create(request.context())
             routerStarter.startForResult(request, listener)

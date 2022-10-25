@@ -1,6 +1,6 @@
 package me.wcy.router.starter
 
-import me.wcy.router.OnRouteResultListener
+import me.wcy.router.RouteResultListener
 import me.wcy.router.Request
 
 /**
@@ -12,6 +12,6 @@ interface RouterStarter {
 
     fun startForResult(
         request: Request,
-        listener: OnRouteResultListener?
+        listener: RouteResultListener?
     )
 }
