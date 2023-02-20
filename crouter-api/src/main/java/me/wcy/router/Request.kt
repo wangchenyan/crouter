@@ -3,6 +3,7 @@ package me.wcy.router
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import me.wcy.router.starter.RouterStarterFactory
@@ -118,144 +119,136 @@ class Request internal constructor(builder: Builder) {
         /**
          * 设置上下文，必须
          */
-        fun context(context: Context): Builder {
+        fun context(context: Context) = apply {
             contextRef = WeakReference(context)
-            return this
         }
 
         /**
          * 设置 URI
          */
-        fun uri(uri: Uri): Builder {
+        fun uri(uri: Uri) = apply {
             this.uri = uri
-            return this
         }
 
         /**
          * 设置 URL
          */
-        fun url(url: String): Builder {
-            return uri(Uri.parse(url))
+        fun url(url: String) = apply {
+            this.uri = Uri.parse(url)
         }
 
         /**
          * 设置目标类型
          */
-        fun target(target: Class<*>): Builder {
+        fun target(target: Class<*>) = apply {
             this.target = target
-            return this
         }
 
         /**
          * 设置意图
          */
-        fun intent(intent: Intent): Builder {
+        fun intent(intent: Intent) = apply {
             this.intent = intent
-            return this
         }
 
         /**
          * 设置旗帜
          */
-        fun flags(flags: Int): Builder {
+        fun flags(flags: Int) = apply {
             this.flags = this.flags or flags
-            return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extras(src: Intent): Builder {
+        fun extras(src: Intent) = apply {
             extras.putExtras(src)
-            return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Boolean?): Builder {
-            if (value != null) {
-                extras.putExtra(name, value)
-            }
-            return this
+        fun extras(src: Bundle) = apply {
+            extras.putExtras(src)
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Int?): Builder {
+        fun extra(name: String, value: Boolean?) = apply {
             if (value != null) {
                 extras.putExtra(name, value)
             }
-            return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Long?): Builder {
+        fun extra(name: String, value: Int?) = apply {
             if (value != null) {
                 extras.putExtra(name, value)
             }
-            return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Float?): Builder {
+        fun extra(name: String, value: Long?) = apply {
             if (value != null) {
                 extras.putExtra(name, value)
             }
-            return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Double?): Builder {
+        fun extra(name: String, value: Float?) = apply {
             if (value != null) {
                 extras.putExtra(name, value)
             }
-            return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: String?): Builder {
+        fun extra(name: String, value: Double?) = apply {
             if (value != null) {
                 extras.putExtra(name, value)
             }
-            return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Serializable?): Builder {
+        fun extra(name: String, value: String?) = apply {
             if (value != null) {
                 extras.putExtra(name, value)
             }
-            return this
         }
 
         /**
          * 设置额外参数
          */
-        fun extra(name: String, value: Parcelable?): Builder {
+        fun extra(name: String, value: Serializable?) = apply {
             if (value != null) {
                 extras.putExtra(name, value)
             }
-            return this
+        }
+
+        /**
+         * 设置额外参数
+         */
+        fun extra(name: String, value: Parcelable?) = apply {
+            if (value != null) {
+                extras.putExtra(name, value)
+            }
         }
 
         /**
          * 设置是否需要登录
          */
-        fun needLogin(needLogin: Boolean): Builder {
+        fun needLogin(needLogin: Boolean) = apply {
             this.needLogin = needLogin
-            return this
         }
 
         /**
