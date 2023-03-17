@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import me.wcy.router.CRouter
+import me.wcy.router.RouterUtils
 
 /**
  * Created by wcy on 2020/12/30.
@@ -17,7 +18,7 @@ object RouterStarterFactory {
     private const val FRAGMENT_TAG = "crouter_fragment_tag"
 
     fun create(context: Context): RouterStarter {
-        if (context is FragmentActivity) {
+        if (context is FragmentActivity && RouterUtils.isActivityAlive(context)) {
             val supportFragmentManager = getSupportFragmentManager(context)
             var permissionSupportFragment =
                 supportFragmentManager.findFragmentByTag(FRAGMENT_TAG) as FragmentXStarter?
@@ -28,7 +29,7 @@ object RouterStarterFactory {
                     .commitNowAllowingStateLoss()
             }
             return permissionSupportFragment
-        } else if (context is Activity) {
+        } else if (context is Activity && RouterUtils.isActivityAlive(context)) {
             val fragmentManager = getFragmentManager(context)
             var permissionFragment =
                 fragmentManager.findFragmentByTag(FRAGMENT_TAG) as FragmentStarter?

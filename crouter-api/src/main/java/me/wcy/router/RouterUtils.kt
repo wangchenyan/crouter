@@ -1,6 +1,8 @@
 package me.wcy.router
 
+import android.app.Activity
 import android.net.Uri
+import android.os.Build
 import me.wcy.router.annotation.Route
 
 /**
@@ -41,5 +43,10 @@ object RouterUtils {
             path = path.dropLast(1)
         }
         return "$scheme://$path"
+    }
+
+    fun isActivityAlive(activity: Activity): Boolean {
+        return activity.isFinishing.not()
+                && (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1 || activity.isDestroyed.not())
     }
 }
