@@ -281,7 +281,7 @@ class Request internal constructor(builder: Builder) {
         fun start() {
             val request = build()
             val routerStarter = RouterStarterFactory.create(request.context())
-            routerStarter.start(request)
+            routerStarter?.start(request)
         }
 
         /**
@@ -290,7 +290,7 @@ class Request internal constructor(builder: Builder) {
         fun startForResult(listener: RouteResultListener) {
             val request = build()
             val routerStarter = RouterStarterFactory.create(request.context())
-            routerStarter.startForResult(request, listener)
+            routerStarter?.startForResult(request, listener)
         }
     }
 }

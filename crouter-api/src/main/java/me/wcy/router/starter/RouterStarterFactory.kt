@@ -17,8 +17,15 @@ import me.wcy.router.RouterUtils
 object RouterStarterFactory {
     private const val FRAGMENT_TAG = "crouter_fragment_tag"
 
-    fun create(context: Context): RouterStarter {
-        if (context is FragmentActivity && RouterUtils.isActivityAlive(context)) {
+    fun create(context: Context): RouterStarter? {
+        if (context is FragmentActivity) {
+            if (RouterUtils.isActivityAlive(context).not()) {
+                Log.w(
+                    CRouter.TAG,
+                    "RouterStarterFactory.create, context is FragmentActivity, but is not alive"
+                )
+                return null
+            }
             val supportFragmentManager = getSupportFragmentManager(context)
             var permissionSupportFragment =
                 supportFragmentManager.findFragmentByTag(FRAGMENT_TAG) as FragmentXStarter?
@@ -29,7 +36,14 @@ object RouterStarterFactory {
                     .commitNowAllowingStateLoss()
             }
             return permissionSupportFragment
-        } else if (context is Activity && RouterUtils.isActivityAlive(context)) {
+        } else if (context is Activity) {
+            if (RouterUtils.isActivityAlive(context).not()) {
+                Log.w(
+                    CRouter.TAG,
+                    "RouterStarterFactory.create, context is Activity, but is not alive"
+                )
+                return null
+            }
             val fragmentManager = getFragmentManager(context)
             var permissionFragment =
                 fragmentManager.findFragmentByTag(FRAGMENT_TAG) as FragmentStarter?
