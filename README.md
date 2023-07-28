@@ -35,7 +35,7 @@
 ### 1. 添加 Jitpack 仓库
 
 ```kotlin
-// settings.gradle.kts
+// settings file
 pluginManagement {
     repositories {
         maven("https://jitpack.io")
@@ -75,6 +75,8 @@ autoregister {
             "include" to listOf("me/wcy/router/annotation/loader/.*")
         )
     )
+    // 如果 ASM 版本不兼容，可修改为兼容版本，默认为 ASM6
+    amsApiVersion = Opcodes.ASM6
 }
 ```
 
