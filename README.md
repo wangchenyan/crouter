@@ -32,85 +32,92 @@
 
 ## Dependency
 
-1. Add gradle dependency
+### 1. 添加 Jitpack 仓库
 
-```groovy
-// root project build.gradle
+```kotlin
+// settings.gradle.kts
+pluginManagement {
+    repositories {
+        maven("https://jitpack.io")
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        maven("https://jitpack.io")
+    }
+}
+```
+
+### 2. 添加 auto-register，用于字节码注入
+
+```kotlin
+// root build file
 buildscript {
     dependencies {
-        // ...
-        classpath 'com.billy.android:autoregister:1.4.2'
-    }
-}
-
-allprojects {
-    repositories {
-        // ...
-        maven { url 'https://jitpack.io' }
+        classpath("com.github.wangchenyan:AutoRegister:1.4.3-beta02")
     }
 }
 ```
 
-2. Add library dependency
+```kotlin
+// app build file
+plugins {
+    id("auto-register")
+}
 
-```groovy
-// module build.gradle
-
-// ...
-
-dependencies {
-    // ...
-    kapt "com.github.wangchenyan.crouter:crouter-compiler:${latestVersion}"
-    implementation "com.github.wangchenyan.crouter:crouter-api:${latestVersion}"
+autoregister {
+    registerInfo = listOf(
+        mapOf(
+            "scanInterface" to "me.wcy.router.annotation.RouterLoader",
+            "codeInsertToClassName" to "me.wcy.router.RouterSet",
+            "registerMethodName" to "register",
+            "include" to listOf("me/wcy/router/annotation/loader/.*")
+        )
+    )
 }
 ```
 
-3. Config
+### 3. 添加 router 依赖和注解处理器
 
-```groovy
-// module build.gradle
-// ...
+```kotlin
+// app build file
+plugins {
+    id("kotlin-kapt")
+}
 
-// 路由配置
 kapt {
     arguments {
-        // 模块名
+        // 必填
         arg("moduleName", project.name)
-        // 默认 scheme
-        arg("defaultScheme", "(http|https|native|taobao)")
-        // 默认 host
+        // 默认 scheme，可选
+        arg("defaultScheme", "(http|https|native|host)")
+        // 默认 host，可选
         arg("defaultHost", "(\\w+\\.)*host\\.com")
     }
 }
 
-// 路由收集，使用默认配置
-autoregister {
-    registerInfo = [
-            [
-                    'scanInterface': 'me.wcy.router.annotation.RouterLoader',
-                    'codeInsertToClassName': 'me.wcy.router.RouterSet',
-                    'registerMethodName': 'register',
-                    'include': ['me/wcy/router/annotation/loader/.*']
-            ]
-    ]
+dependencies {
+    kapt("com.github.wangchenyan.crouter:crouter-compiler:${latestVersion}")
+    implementation("com.github.wangchenyan.crouter:crouter-api:${latestVersion}")
 }
-
-// ...
 ```
 
 ## Usage
 
-1. 初始化，设置路由客户端。建议在 Application 的 onCreate，或第一个 Activity 的 onCreate 中执行
+### 1. 初始化，设置路由客户端
+
+建议在 Application 的 onCreate，或第一个 Activity 的 onCreate 中执行
 
 ```kotlin
 CRouter.setRouterClient(
     RouterClient.Builder()
-        // 可选，设置登录拦截器
+        // 设置登录拦截器，可选
         .loginProvider { context, callback ->
             CRouter.with(context)
                 .url("scheme://host/login")
-                .startForResult { resultCode, data ->
-                    if (resultCode == Activity.RESULT_OK) {
+                .startForResult {
+                    if (it.isSuccess()) {
                         callback.invoke()
                     }
                 }
@@ -121,7 +128,7 @@ CRouter.setRouterClient(
 )
 ```
 
-2. 在 `BaseActivity` 中配置 `getIntent` 包装
+### 2. 在 `BaseActivity` 中配置 `getIntent` 包装
 
 ```kotlin
 abstract class BaseActivity : AppCompatActivity() {
@@ -131,7 +138,7 @@ abstract class BaseActivity : AppCompatActivity() {
 }
 ```
 
-3. 配置 Activity 路由注解
+### 3. 配置 Activity 路由注解
 
 ```kotlin
 // path 使用正则匹配，注意转义
@@ -140,7 +147,7 @@ class TargetActivity : BaseActivity() {
 }
 ```
 
-4. 尽情使用吧
+### 4. 尽情使用吧
 
 ```kotlin
 // 不关心结果
@@ -151,9 +158,9 @@ CRouter.with(this)
 // 关心结果
 CRouter.with(this)
     .url("scheme://host/target.html")
-    .startForResult { resultCode, data ->
-        if (resultCode == Activity.RESULT_OK && data != null) {
-            val value = data.extras?.getString("key")
+    .startForResult {
+        if (it.isSuccess("key")) {
+            val value = it.data?.getStringExtra("key")
             alert("跳转取值", value)
         }
     }

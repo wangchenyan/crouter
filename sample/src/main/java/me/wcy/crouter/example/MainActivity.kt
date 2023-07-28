@@ -24,7 +24,7 @@ class MainActivity : BaseActivity() {
                     Toast.makeText(this@MainActivity, "拦截登录", Toast.LENGTH_SHORT).show()
                     CRouter.with(context)
                         .url("https://host.com/login.html")
-                        .startForResult { it ->
+                        .startForResult {
                             if (it.isSuccess()) {
                                 callback.invoke()
                             }
@@ -39,7 +39,7 @@ class MainActivity : BaseActivity() {
         button1.setOnClickListener {
             CRouter.with(this)
                 .url("/target.html")
-                .startForResult { it ->
+                .startForResult {
                     if (it.isSuccess("key")) {
                         val value = it.data?.getStringExtra("key")
                         alert("跳转取值", value)
@@ -50,7 +50,7 @@ class MainActivity : BaseActivity() {
             CRouter.with(this)
                 .url("https://host.com/target.html")
                 .needLogin(true)
-                .startForResult { it ->
+                .startForResult {
                     if (it.isSuccess("key")) {
                         val value = it.data?.getStringExtra("key")
                         alert("跳转取值", value)
@@ -60,7 +60,7 @@ class MainActivity : BaseActivity() {
         button3.setOnClickListener {
             CRouter.with(this)
                 .url("https://host.com/fragment/my?key1=value1&key2=value2")
-                .startForResult { it ->
+                .startForResult {
                     if (it.isSuccess("key")) {
                         val value = it.data?.getStringExtra("key")
                         alert("跳转取值", value)
