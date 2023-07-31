@@ -8,9 +8,9 @@ import com.squareup.javapoet.ParameterSpec
 import com.squareup.javapoet.ParameterizedTypeName
 import com.squareup.javapoet.TypeSpec
 import me.wcy.router.annotation.Route
-import me.wcy.router.annotation.Router
-import me.wcy.router.annotation.RouterBuilder
-import me.wcy.router.annotation.RouterLoader
+import me.wcy.router.annotation.RouteInfo
+import me.wcy.router.annotation.RouteInfoBuilder
+import me.wcy.router.annotation.RouteLoader
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Filer
 import javax.annotation.processing.ProcessingEnvironment
@@ -43,9 +43,9 @@ class RouterProcessor : AbstractProcessor() {
         val moduleName = processingEnv.options["moduleName"]
         val defaultScheme = processingEnv.options["defaultScheme"]
         val defaultHost = processingEnv.options["defaultHost"]
-        if (moduleName == null || moduleName.isEmpty()
-            || defaultScheme == null || defaultScheme.isEmpty()
-            || defaultHost == null || defaultHost.isEmpty()
+        if (moduleName.isNullOrEmpty()
+            || defaultScheme.isNullOrEmpty()
+            || defaultHost.isNullOrEmpty()
         ) {
             throw IllegalArgumentException(
                 "[CRouter] Can not find apt argument 'moduleName', 'defaultScheme' or 'defaultHost', check if has add the code like this in module's build.gradle:\n" +
@@ -70,7 +70,7 @@ class RouterProcessor : AbstractProcessor() {
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
         val supportAnnotationTypes = mutableSetOf<String>()
-        supportAnnotationTypes.add(Router::class.java.canonicalName)
+        supportAnnotationTypes.add(Route::class.java.canonicalName)
         return supportAnnotationTypes
     }
 
@@ -82,64 +82,64 @@ class RouterProcessor : AbstractProcessor() {
         annotations: MutableSet<out TypeElement>?,
         roundEnv: RoundEnvironment
     ): Boolean {
-        val routerElements = roundEnv.getElementsAnnotatedWith(Router::class.java)
-        return parseRouter(routerElements)
+        val routeElements = roundEnv.getElementsAnnotatedWith(Route::class.java)
+        return parseRoutes(routeElements)
     }
 
-    private fun parseRouter(routerElements: MutableSet<out Element>?): Boolean {
-        if (routerElements == null || routerElements.size == 0) {
+    private fun parseRoutes(routeElements: MutableSet<out Element>?): Boolean {
+        if (routeElements == null || routeElements.size == 0) {
             return false
         }
 
-        Log.i("[CRouter] Found routers, size is ${routerElements.size}")
+        Log.i("[CRouter] Found routes, size is ${routeElements.size}")
 
         val activityType = elementUtil.getTypeElement("android.app.Activity")
         val fragmentType = elementUtil.getTypeElement("android.app.Fragment")
         val fragmentXType = elementUtil.getTypeElement("androidx.fragment.app.Fragment")
-        val routerBuilderCn = ClassName.get(RouterBuilder::class.java)
+        val routeInfoBuilderCn = ClassName.get(RouteInfoBuilder::class.java)
 
         /**
-         * Param type: Set<Router>
+         * Param type: Set<RouteInfo>
          */
         val inputMapTypeName = ParameterizedTypeName.get(
             ClassName.get(Set::class.java),
-            ClassName.get(Route::class.java)
+            ClassName.get(RouteInfo::class.java)
         )
 
         /**
-         * Param name: routerSet
+         * Param name: routeSet
          */
         val groupParamSpec =
             ParameterSpec.builder(inputMapTypeName, ProcessorUtils.PARAM_NAME).build()
 
         /**
-         * Method: @Override public void loadRouter(Set<Route> routerSet)
+         * Method: @Override public void loadRoute(Set<RouteInfo> routeSet)
          */
-        val loadRouterMethodBuilder = MethodSpec.methodBuilder(ProcessorUtils.METHOD_NAME)
+        val loadRouteMethodBuilder = MethodSpec.methodBuilder(ProcessorUtils.METHOD_NAME)
             .addAnnotation(Override::class.java)
             .addModifiers(Modifier.PUBLIC)
             .addParameter(groupParamSpec)
 
-        for (element in routerElements) {
+        for (element in routeElements) {
             val typeMirror = element.asType()
-            val router = element.getAnnotation(Router::class.java)
+            val route = element.getAnnotation(Route::class.java)
 
             if (typeUtil.isSubtype(typeMirror, activityType.asType())
                 || typeUtil.isSubtype(typeMirror, fragmentType.asType())
                 || typeUtil.isSubtype(typeMirror, fragmentXType.asType())
             ) {
-                Log.i("[CRouter] Found router: $typeMirror")
+                Log.i("[CRouter] Found route: $typeMirror")
 
                 val className = ClassName.get(element as TypeElement)
-                var routerUrl = ProcessorUtils.assembleRouterUrl(router, defaultScheme, defaultHost)
-                routerUrl = ProcessorUtils.escapeUrl(routerUrl)
+                var routeUrl = ProcessorUtils.assembleRouteUrl(route, defaultScheme, defaultHost)
+                routeUrl = ProcessorUtils.escapeUrl(routeUrl)
 
                 /**
-                 * Statement: routerSet.add(RouterBuilder.buildRouter(url, needLogin, target));
+                 * Statement: routeSet.add(RouteInfoBuilder.buildRouteInfo(url, needLogin, target));
                  */
-                loadRouterMethodBuilder.addStatement(
-                    "\$N.add(\$T.buildRouter(\$N, \$T.class, \$N))", ProcessorUtils.PARAM_NAME,
-                    routerBuilderCn, routerUrl, className, router.needLogin.toString()
+                loadRouteMethodBuilder.addStatement(
+                    "\$N.add(\$T.buildRouteInfo(\$N, \$T.class, \$N))", ProcessorUtils.PARAM_NAME,
+                    routeInfoBuilderCn, routeUrl, className, route.needLogin.toString()
                 )
             }
         }
@@ -149,11 +149,11 @@ class RouterProcessor : AbstractProcessor() {
          */
         JavaFile.builder(
             ProcessorUtils.PACKAGE_NAME,
-            TypeSpec.classBuilder("RouterLoader\$$moduleName")
+            TypeSpec.classBuilder("RouteLoader\$$moduleName")
                 .addJavadoc(ProcessorUtils.JAVADOC)
-                .addSuperinterface(ClassName.get(RouterLoader::class.java))
+                .addSuperinterface(ClassName.get(RouteLoader::class.java))
                 .addModifiers(Modifier.PUBLIC)
-                .addMethod(loadRouterMethodBuilder.build())
+                .addMethod(loadRouteMethodBuilder.build())
                 .build()
         )
             .build()

@@ -2,7 +2,7 @@ package me.wcy.router
 
 import android.app.Application
 import android.content.Context
-import me.wcy.router.annotation.Route
+import me.wcy.router.annotation.RouteInfo
 
 /**
  * 路由入口
@@ -41,7 +41,7 @@ object CRouter {
         return routerClient!!
     }
 
-    internal fun getRouteSet(): Set<Route> {
-        return RouterSet.get()
+    internal fun getRouteSet(): Set<RouteInfo> {
+        return RouteSet.get()
     }
 }

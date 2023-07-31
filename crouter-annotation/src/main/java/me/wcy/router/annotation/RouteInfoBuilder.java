@@ -5,10 +5,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * 路由信息构建器
  */
-public class RouterBuilder {
+public class RouteInfoBuilder {
 
-    public static Route buildRouter(String url, Class target, boolean needLogin) {
-        return new Route() {
+    public static RouteInfo buildRouteInfo(String url, Class target, boolean needLogin) {
+        return new RouteInfo() {
             @NotNull
             @Override
             public String url() {

@@ -48,8 +48,8 @@ kapt {
 autoregister {
     registerInfo = listOf(
         mapOf(
-            "scanInterface" to "me.wcy.router.annotation.RouterLoader",
-            "codeInsertToClassName" to "me.wcy.router.RouterSet",
+            "scanInterface" to "me.wcy.router.annotation.RouteLoader",
+            "codeInsertToClassName" to "me.wcy.router.RouteSet",
             "registerMethodName" to "register",
             "include" to listOf("me/wcy/router/annotation/loader/.*")
         )

@@ -1,7 +1,7 @@
 package me.wcy.router
 
 import androidx.fragment.app.Fragment
-import me.wcy.router.annotation.Route
+import me.wcy.router.annotation.RouteInfo
 
 /**
  * Created by wangchenyan.top on 2022/6/8.
@@ -10,7 +10,7 @@ internal object FragmentFinder {
 
     fun findFragmentX(request: Request): Class<out Fragment>? {
         val uri = request.uri() ?: return null
-        CRouter.getRouteSet().find { route: Route ->
+        CRouter.getRouteSet().find { route: RouteInfo ->
             RouterUtils.match(route, uri) && isFragmentX(route.target())
         }?.let {
             return it.target() as Class<out Fragment>
@@ -20,7 +20,7 @@ internal object FragmentFinder {
 
     fun findFragment(request: Request): Class<out android.app.Fragment>? {
         val uri = request.uri() ?: return null
-        CRouter.getRouteSet().find { route: Route ->
+        CRouter.getRouteSet().find { route: RouteInfo ->
             RouterUtils.match(route, uri) && isFragment(route.target())
         }?.let {
             return it.target() as Class<out android.app.Fragment>

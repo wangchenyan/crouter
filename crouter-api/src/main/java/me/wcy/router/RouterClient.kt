@@ -2,7 +2,7 @@ package me.wcy.router
 
 import android.content.Context
 import android.content.Intent
-import me.wcy.router.annotation.Router
+import me.wcy.router.annotation.Route
 import java.util.Collections
 
 /**
@@ -80,7 +80,7 @@ class RouterClient : Call.Factory {
         }
 
         /**
-         * 设置登录提供者。设置后 [Router.needLogin] 才能生效
+         * 设置登录提供者。设置后 [Route.needLogin] 才能生效
          */
         fun loginProvider(loginProvider: (context: Context, callback: () -> Unit) -> Unit): Builder {
             this.loginProvider = loginProvider

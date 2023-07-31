@@ -8,7 +8,7 @@ import me.wcy.router.FragmentFinder
 import me.wcy.router.Interceptor
 import me.wcy.router.Response
 import me.wcy.router.RouterUtils
-import me.wcy.router.annotation.Route
+import me.wcy.router.annotation.RouteInfo
 
 /**
  * URI 拦截器
@@ -19,9 +19,9 @@ class UriInterceptor : Interceptor {
         val request = chain.request()
         val uri = request.uri()
         uri?.let {
-            CRouter.getRouteSet().find { route: Route ->
+            CRouter.getRouteSet().find { route: RouteInfo ->
                 RouterUtils.match(route, uri)
-            }?.let { route: Route ->
+            }?.let { route: RouteInfo ->
                 val extras = Intent()
                 for (key in uri.queryParameterNames) {
                     extras.putExtra(key, uri.getQueryParameter(key))

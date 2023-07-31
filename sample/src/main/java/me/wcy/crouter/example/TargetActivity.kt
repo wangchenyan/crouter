@@ -4,12 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import me.wcy.router.annotation.Router
+import me.wcy.router.annotation.Route
 
 /**
  * Created by wcy on 2019-09-10.
  */
-@Router("/target\\.html")
+@Route("/target\\.html")
 class TargetActivity : BaseActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {

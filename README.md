@@ -69,8 +69,8 @@ plugins {
 autoregister {
     registerInfo = listOf(
         mapOf(
-            "scanInterface" to "me.wcy.router.annotation.RouterLoader",
-            "codeInsertToClassName" to "me.wcy.router.RouterSet",
+            "scanInterface" to "me.wcy.router.annotation.RouteLoader",
+            "codeInsertToClassName" to "me.wcy.router.RouteSet",
             "registerMethodName" to "register",
             "include" to listOf("me/wcy/router/annotation/loader/.*")
         )
@@ -144,7 +144,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
 ```kotlin
 // path 使用正则匹配，注意转义
-@Router("/target\\.html", needLogin = true)
+@Route("/target\\.html", needLogin = true)
 class TargetActivity : BaseActivity() {
 }
 ```

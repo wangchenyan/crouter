@@ -3,7 +3,7 @@ package me.wcy.router
 import android.app.Activity
 import android.net.Uri
 import android.os.Build
-import me.wcy.router.annotation.Route
+import me.wcy.router.annotation.RouteInfo
 
 /**
  * Created by wcy on 2019/7/13.
@@ -13,7 +13,7 @@ object RouterUtils {
     /**
      * 判断路由是否匹配 URL
      */
-    fun match(route: Route, uri: Uri): Boolean {
+    fun match(route: RouteInfo, uri: Uri): Boolean {
         val routeUrl = route.url().formatUrl()
         var targetUrl = if (uri.scheme.isNullOrEmpty()
             && uri.host.isNullOrEmpty()
