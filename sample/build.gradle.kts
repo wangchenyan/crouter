@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     id("auto-register")
 }
 
@@ -31,15 +31,13 @@ android {
 /**
  * crouter 参数，必须！！！
  */
-kapt {
-    arguments {
-        // 使用默认
-        arg("moduleName", project.name)
-        // 默认 scheme
-        arg("defaultScheme", "(http|https|native|host)")
-        // 默认 host
-        arg("defaultHost", "(\\w+\\.)*host\\.com")
-    }
+ksp {
+    // 使用默认
+    arg("moduleName", project.name)
+    // 默认 scheme
+    arg("defaultScheme", "(http|https|native|host)")
+    // 默认 host
+    arg("defaultHost", "(\\w+\\.)*host\\.com")
 }
 
 /**
@@ -50,6 +48,7 @@ autoregister {
         mapOf(
             "scanInterface" to "me.wcy.router.annotation.RouteLoader",
             "codeInsertToClassName" to "me.wcy.router.RouteSet",
+            "codeInsertToMethodName" to "init",
             "registerMethodName" to "register",
             "include" to listOf("me/wcy/router/annotation/loader/.*")
         )
@@ -58,6 +57,6 @@ autoregister {
 
 dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
-    kapt(project(":crouter-compiler"))
+    ksp(project(":crouter-compiler"))
     implementation(project(":crouter-api"))
 }

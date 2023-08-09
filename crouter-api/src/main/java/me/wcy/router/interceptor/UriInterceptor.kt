@@ -9,6 +9,7 @@ import me.wcy.router.Interceptor
 import me.wcy.router.Response
 import me.wcy.router.RouterUtils
 import me.wcy.router.annotation.RouteInfo
+import kotlin.reflect.KClass
 
 /**
  * URI 拦截器
@@ -26,19 +27,19 @@ class UriInterceptor : Interceptor {
                 for (key in uri.queryParameterNames) {
                     extras.putExtra(key, uri.getQueryParameter(key))
                 }
-                val intent = getIntent(request.context(), uri, route.target(), extras)
+                val intent = getIntent(request.context(), uri, route.target, extras)
                 return Response.Builder()
                     .context(request.context())
                     .request(request)
                     .intent(intent)
-                    .needLogin(request.needLogin() || route.needLogin())
+                    .needLogin(request.needLogin() || route.needLogin)
                     .build()
             }
         }
         return chain.proceed(request)
     }
 
-    private fun getIntent(context: Context, uri: Uri, target: Class<*>, extras: Intent): Intent {
+    private fun getIntent(context: Context, uri: Uri, target: KClass<*>, extras: Intent): Intent {
         val intent: Intent
         if (FragmentFinder.isAnyFragment(target)
             && CRouter.getRouterClient().fragmentContainerIntentProvider() != null
@@ -47,7 +48,7 @@ class UriInterceptor : Interceptor {
             intent.putExtras(extras)
             intent.putExtra(CRouter.CROUTER_KEY_FRAGMENT_URI, uri)
         } else {
-            intent = Intent(context, target)
+            intent = Intent(context, target.java)
             intent.putExtras(extras)
         }
         return intent

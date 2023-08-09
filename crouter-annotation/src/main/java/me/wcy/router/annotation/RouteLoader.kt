@@ -1,10 +1,8 @@
-package me.wcy.router.annotation;
-
-import java.util.Set;
+package me.wcy.router.annotation
 
 /**
  * 路由加载器
  */
-public interface RouteLoader {
-    void loadRoute(Set<RouteInfo> routeSet);
+interface RouteLoader {
+    fun loadRoute(routeSet: MutableSet<RouteInfo>)
 }

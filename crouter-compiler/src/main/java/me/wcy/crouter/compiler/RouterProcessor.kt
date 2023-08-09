@@ -1,63 +1,67 @@
 package me.wcy.crouter.compiler
 
-import com.google.auto.service.AutoService
-import com.squareup.javapoet.ClassName
-import com.squareup.javapoet.JavaFile
-import com.squareup.javapoet.MethodSpec
-import com.squareup.javapoet.ParameterSpec
-import com.squareup.javapoet.ParameterizedTypeName
-import com.squareup.javapoet.TypeSpec
+import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.getAllSuperTypes
+import com.google.devtools.ksp.getAnnotationsByType
+import com.google.devtools.ksp.processing.CodeGenerator
+import com.google.devtools.ksp.processing.Dependencies
+import com.google.devtools.ksp.processing.KSPLogger
+import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSDeclaration
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.DelicateKotlinPoetApi
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.asTypeName
 import me.wcy.router.annotation.Route
 import me.wcy.router.annotation.RouteInfo
-import me.wcy.router.annotation.RouteInfoBuilder
 import me.wcy.router.annotation.RouteLoader
-import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.Filer
-import javax.annotation.processing.ProcessingEnvironment
-import javax.annotation.processing.Processor
-import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.SourceVersion
-import javax.lang.model.element.Element
-import javax.lang.model.element.Modifier
-import javax.lang.model.element.TypeElement
-import javax.lang.model.util.Elements
-import javax.lang.model.util.Types
 
-@AutoService(Processor::class)
-class RouterProcessor : AbstractProcessor() {
-    private lateinit var filer: Filer
-    private lateinit var elementUtil: Elements
-    private lateinit var typeUtil: Types
+@DelicateKotlinPoetApi("")
+@KspExperimental
+class RouterProcessor : SymbolProcessor, SymbolProcessorProvider {
+    private lateinit var logger: KSPLogger
+    private lateinit var codeGenerator: CodeGenerator
     private lateinit var moduleName: String
     private lateinit var defaultScheme: String
     private lateinit var defaultHost: String
 
-    override fun init(processingEnv: ProcessingEnvironment) {
-        super.init(processingEnv)
+    private val supportTypes = setOf(
+        "android.app.Activity",
+        "android.app.Fragment",
+        "androidx.fragment.app.Fragment"
+    )
 
-        filer = processingEnv.filer
-        elementUtil = processingEnv.elementUtils
-        typeUtil = processingEnv.typeUtils
-        Log.setLogger(processingEnv.messager)
+    override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
+        logger = environment.logger
+        codeGenerator = environment.codeGenerator
 
-        val moduleName = processingEnv.options["moduleName"]
-        val defaultScheme = processingEnv.options["defaultScheme"]
-        val defaultHost = processingEnv.options["defaultHost"]
+        val moduleName = environment.options["moduleName"]
+        val defaultScheme = environment.options["defaultScheme"]
+        val defaultHost = environment.options["defaultHost"]
         if (moduleName.isNullOrEmpty()
             || defaultScheme.isNullOrEmpty()
             || defaultHost.isNullOrEmpty()
         ) {
             throw IllegalArgumentException(
-                "[CRouter] Can not find apt argument 'moduleName', 'defaultScheme' or 'defaultHost', check if has add the code like this in module's build.gradle:\n" +
-                        "    In Kotlin:\n" +
-                        "    \n" +
-                        "    kapt {\n" +
-                        "        arguments {\n" +
-                        "          arg(\"moduleName\", project.name)\n" +
-                        "          arg(\"defaultScheme\", 'scheme')\n" +
-                        "          arg(\"defaultHost\", 'host')\n" +
-                        "        }\n" +
-                        "    }\n"
+                "[CRouter] Can not find ksp argument 'moduleName', 'defaultScheme' or 'defaultHost', check if has add the code like this in module's build.gradle.kts:\n" +
+                        "\n" +
+                        "    ksp {\n" +
+                        "       arg(\"moduleName\", project.name)\n" +
+                        "       arg(\"defaultScheme\", 'scheme')\n" +
+                        "       arg(\"defaultHost\", 'host')\n" +
+                        "    }" +
+                        "\n"
             )
         }
 
@@ -65,100 +69,92 @@ class RouterProcessor : AbstractProcessor() {
         this.defaultScheme = defaultScheme
         this.defaultHost = defaultHost
 
-        Log.i("[CRouter] Start to deal module ${this.moduleName}, defaultScheme=$defaultScheme, defaultHost=$defaultHost")
+        logger.info("[CRouter] Start to deal module ${this.moduleName}, defaultScheme=$defaultScheme, defaultHost=$defaultHost")
+        return this
     }
 
-    override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        val supportAnnotationTypes = mutableSetOf<String>()
-        supportAnnotationTypes.add(Route::class.java.canonicalName)
-        return supportAnnotationTypes
-    }
-
-    override fun getSupportedSourceVersion(): SourceVersion {
-        return SourceVersion.latestSupported()
-    }
-
-    override fun process(
-        annotations: MutableSet<out TypeElement>?,
-        roundEnv: RoundEnvironment
-    ): Boolean {
-        val routeElements = roundEnv.getElementsAnnotatedWith(Route::class.java)
-        return parseRoutes(routeElements)
-    }
-
-    private fun parseRoutes(routeElements: MutableSet<out Element>?): Boolean {
-        if (routeElements == null || routeElements.size == 0) {
-            return false
+    override fun process(resolver: Resolver): List<KSAnnotated> {
+        val routeElements = resolver.getSymbolsWithAnnotation(Route::class.java.name).toList()
+        if (routeElements.isEmpty()) {
+            return emptyList()
         }
 
-        Log.i("[CRouter] Found routes, size is ${routeElements.size}")
-
-        val activityType = elementUtil.getTypeElement("android.app.Activity")
-        val fragmentType = elementUtil.getTypeElement("android.app.Fragment")
-        val fragmentXType = elementUtil.getTypeElement("androidx.fragment.app.Fragment")
-        val routeInfoBuilderCn = ClassName.get(RouteInfoBuilder::class.java)
+        logger.info("[CRouter] Found routes, size is ${routeElements.size}")
 
         /**
-         * Param type: Set<RouteInfo>
+         * Param type: MutableSet<RouteInfo>
          */
-        val inputMapTypeName = ParameterizedTypeName.get(
-            ClassName.get(Set::class.java),
-            ClassName.get(RouteInfo::class.java)
-        )
+        val setTypeName = ClassName(
+            "kotlin.collections",
+            "MutableSet"
+        ).parameterizedBy(RouteInfo::class.asTypeName())
 
         /**
-         * Param name: routeSet
+         * Param name: routeSet: MutableSet<RouteInfo>
          */
-        val groupParamSpec =
-            ParameterSpec.builder(inputMapTypeName, ProcessorUtils.PARAM_NAME).build()
+        val groupParamSpec = ParameterSpec.builder(ProcessorUtils.PARAM_NAME, setTypeName)
+            .build()
 
         /**
-         * Method: @Override public void loadRoute(Set<RouteInfo> routeSet)
+         * Method: override fun loadRoute(routeSet: MutableSet<RouteInfo>)
          */
-        val loadRouteMethodBuilder = MethodSpec.methodBuilder(ProcessorUtils.METHOD_NAME)
-            .addAnnotation(Override::class.java)
-            .addModifiers(Modifier.PUBLIC)
+        val loadRouteMethodBuilder = FunSpec.builder(ProcessorUtils.METHOD_NAME)
+            .addModifiers(KModifier.OVERRIDE)
             .addParameter(groupParamSpec)
 
-        for (element in routeElements) {
-            val typeMirror = element.asType()
-            val route = element.getAnnotation(Route::class.java)
+        val routeInfoCn = RouteInfo::class.asClassName()
 
-            if (typeUtil.isSubtype(typeMirror, activityType.asType())
-                || typeUtil.isSubtype(typeMirror, fragmentType.asType())
-                || typeUtil.isSubtype(typeMirror, fragmentXType.asType())
-            ) {
-                Log.i("[CRouter] Found route: $typeMirror")
+        routeElements.forEach {
+            checkDeclaration(it)
+            val declaration = it as KSDeclaration
+            val className = declaration.toClassName()
+            logger.info("[CRouter] Found route: ${className.canonicalName}")
 
-                val className = ClassName.get(element as TypeElement)
-                var routeUrl = ProcessorUtils.assembleRouteUrl(route, defaultScheme, defaultHost)
-                routeUrl = ProcessorUtils.escapeUrl(routeUrl)
+            val route = declaration.getAnnotationsByType(Route::class).first()
+            var routeUrl = ProcessorUtils.assembleRouteUrl(route, defaultScheme, defaultHost)
+            routeUrl = ProcessorUtils.escapeUrl(routeUrl)
 
-                /**
-                 * Statement: routeSet.add(RouteInfoBuilder.buildRouteInfo(url, needLogin, target));
-                 */
-                loadRouteMethodBuilder.addStatement(
-                    "\$N.add(\$T.buildRouteInfo(\$N, \$T.class, \$N))", ProcessorUtils.PARAM_NAME,
-                    routeInfoBuilderCn, routeUrl, className, route.needLogin.toString()
-                )
-            }
+            /**
+             * Statement: routeSet.add(RouteInfo(url, needLogin, target))
+             */
+            loadRouteMethodBuilder.addStatement(
+                "%N.add(%T(%L, %T::class, %L))",
+                ProcessorUtils.PARAM_NAME,
+                routeInfoCn,
+                routeUrl,
+                className,
+                route.needLogin.toString()
+            )
         }
 
         /**
          * Write to file
          */
-        JavaFile.builder(
-            ProcessorUtils.PACKAGE_NAME,
-            TypeSpec.classBuilder("RouteLoader\$$moduleName")
-                .addJavadoc(ProcessorUtils.JAVADOC)
-                .addSuperinterface(ClassName.get(RouteLoader::class.java))
-                .addModifiers(Modifier.PUBLIC)
-                .addMethod(loadRouteMethodBuilder.build())
-                .build()
-        )
+        val fileSpec = FileSpec.builder(ProcessorUtils.PACKAGE_NAME, "RouteLoader\$$moduleName")
+            .addType(
+                TypeSpec.classBuilder("RouteLoader\$$moduleName")
+                    .addKdoc(ProcessorUtils.JAVADOC)
+                    .addSuperinterface(RouteLoader::class.java)
+                    .addFunction(loadRouteMethodBuilder.build())
+                    .build()
+            )
             .build()
-            .writeTo(filer)
 
-        return true
+        val file =
+            codeGenerator.createNewFile(Dependencies.ALL_FILES, fileSpec.packageName, fileSpec.name)
+        file.write(fileSpec.toString().toByteArray())
+
+        return emptyList()
+    }
+
+    private fun checkDeclaration(annotated: KSAnnotated) {
+        check(annotated is KSClassDeclaration) {
+            "Type [${annotated}] with annotation [${Route::class.java.name}] should be a class"
+        }
+        checkNotNull(annotated.getAllSuperTypes().find {
+            it.declaration.toClassName().canonicalName in supportTypes
+        }) {
+            "Un support route type [${annotated.toClassName().canonicalName}], only support activity or fragment"
+        }
     }
 }

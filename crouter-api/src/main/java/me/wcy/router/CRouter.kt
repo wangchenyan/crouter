@@ -13,6 +13,9 @@ object CRouter {
 
     private var routerClient: RouterClient? = null
     private lateinit var application: Application
+    private val routeSet by lazy {
+        RouteSet().routeSet
+    }
 
     /**
      * 设置路由客户端，不设置则使用默认客户端
@@ -42,6 +45,6 @@ object CRouter {
     }
 
     internal fun getRouteSet(): Set<RouteInfo> {
-        return RouteSet.get()
+        return routeSet
     }
 }

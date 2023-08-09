@@ -14,7 +14,7 @@ object RouterUtils {
      * 判断路由是否匹配 URL
      */
     fun match(route: RouteInfo, uri: Uri): Boolean {
-        val routeUrl = route.url().formatUrl()
+        val routeUrl = route.url.formatUrl()
         var targetUrl = if (uri.scheme.isNullOrEmpty()
             && uri.host.isNullOrEmpty()
             && CRouter.getRouterClient().baseUrl()?.isNotEmpty() == true

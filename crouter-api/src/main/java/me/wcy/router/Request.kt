@@ -255,14 +255,14 @@ class Request internal constructor(builder: Builder) {
          * 获取 Fragment
          */
         fun getFragmentX(): Class<out Fragment>? {
-            return FragmentFinder.findFragmentX(build())
+            return FragmentFinder.findFragmentX(build())?.java
         }
 
         /**
          * 获取 Fragment
          */
         fun getFragment(): Class<out android.app.Fragment>? {
-            return FragmentFinder.findFragment(build())
+            return FragmentFinder.findFragment(build())?.java
         }
 
         /**

@@ -14,7 +14,7 @@ afterEvaluate {
 }
 
 dependencies {
-    implementation("com.google.auto.service:auto-service:1.0")
-    implementation("com.squareup:javapoet:1.13.0")
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.8.20-1.0.11")
+    implementation("com.squareup:kotlinpoet:1.12.0")
     implementation(project(":crouter-annotation"))
 }
