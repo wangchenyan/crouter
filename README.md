@@ -71,6 +71,7 @@ autoregister {
         mapOf(
             "scanInterface" to "me.wcy.router.annotation.RouteLoader",
             "codeInsertToClassName" to "me.wcy.router.RouteSet",
+            "codeInsertToMethodName" to "init",
             "registerMethodName" to "register",
             "include" to listOf("me/wcy/router/annotation/loader/.*")
         )
@@ -82,25 +83,25 @@ autoregister {
 
 ### 3. 添加 router 依赖和注解处理器
 
+> 注意：`2.4.0` 版本开始使用 `ksp`，建议尽快迁移，如果仍想使用 `kapt`，请使用 `2.3.0` 版本
+
 ```kotlin
 // app build file
 plugins {
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
-kapt {
-    arguments {
-        // 必填
-        arg("moduleName", project.name)
-        // 默认 scheme，可选
-        arg("defaultScheme", "(http|https|native|host)")
-        // 默认 host，可选
-        arg("defaultHost", "(\\w+\\.)*host\\.com")
-    }
+ksp {
+    // 使用默认
+    arg("moduleName", project.name)
+    // 默认 scheme
+    arg("defaultScheme", "(http|https|native|host)")
+    // 默认 host
+    arg("defaultHost", "(\\w+\\.)*host\\.com")
 }
 
 dependencies {
-    kapt("com.github.wangchenyan.crouter:crouter-compiler:${latestVersion}")
+    ksp("com.github.wangchenyan.crouter:crouter-compiler:${latestVersion}")
     implementation("com.github.wangchenyan.crouter:crouter-api:${latestVersion}")
 }
 ```

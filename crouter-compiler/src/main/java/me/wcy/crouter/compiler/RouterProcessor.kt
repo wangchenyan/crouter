@@ -69,7 +69,7 @@ class RouterProcessor : SymbolProcessor, SymbolProcessorProvider {
         this.defaultScheme = defaultScheme
         this.defaultHost = defaultHost
 
-        logger.info("[CRouter] Start to deal module ${this.moduleName}, defaultScheme=$defaultScheme, defaultHost=$defaultHost")
+        logger.warn("[CRouter] Start to deal module ${this.moduleName}, defaultScheme=$defaultScheme, defaultHost=$defaultHost")
         return this
     }
 
@@ -79,7 +79,7 @@ class RouterProcessor : SymbolProcessor, SymbolProcessorProvider {
             return emptyList()
         }
 
-        logger.info("[CRouter] Found routes, size is ${routeElements.size}")
+        logger.warn("[CRouter] Found routes, size is ${routeElements.size}")
 
         /**
          * Param type: MutableSet<RouteInfo>
@@ -108,7 +108,7 @@ class RouterProcessor : SymbolProcessor, SymbolProcessorProvider {
             checkDeclaration(it)
             val declaration = it as KSDeclaration
             val className = declaration.toClassName()
-            logger.info("[CRouter] Found route: ${className.canonicalName}")
+            logger.warn("[CRouter] Found route: ${className.canonicalName}")
 
             val route = declaration.getAnnotationsByType(Route::class).first()
             var routeUrl = ProcessorUtils.assembleRouteUrl(route, defaultScheme, defaultHost)
