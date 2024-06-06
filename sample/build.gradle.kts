@@ -17,6 +17,11 @@ android {
         versionName = libs.versions.versionName.get()
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.valueOf(libs.versions.java.get())
+        targetCompatibility = JavaVersion.valueOf(libs.versions.java.get())
+    }
+
     signingConfigs {
         register("release") {
             storeFile = file("debug.keystore")
