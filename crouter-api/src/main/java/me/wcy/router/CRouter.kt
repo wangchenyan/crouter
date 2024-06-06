@@ -2,6 +2,7 @@ package me.wcy.router
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import me.wcy.router.annotation.CRouterConsts
 import me.wcy.router.annotation.RouteMeta
 
@@ -18,9 +19,17 @@ object CRouter {
     internal val routes: MutableSet<RouteMeta> = mutableSetOf()
 
     init {
-        val routeRegisterer = Class.forName(CRouterConsts.FINAL_REGISTERER_CLASS_NAME)
-            .newInstance() as IRouteRegisterer
-        routeRegisterer.registerModuleRoutes()
+        runCatching {
+            val routeRegisterer = Class.forName(CRouterConsts.FINAL_REGISTERER_CLASS_NAME)
+                .newInstance() as IRouteRegisterer
+            routeRegisterer.registerModuleRoutes()
+        }.onFailure {
+            Log.e(
+                TAG,
+                "Load router registerer class error, please check if has add crouter-plugin",
+                it
+            )
+        }
     }
 
     /**

@@ -9,6 +9,6 @@ plugins {
 
 buildscript {
     dependencies {
-        classpath("com.github.wangchenyan:crouter-plugin:1.0")
+        // classpath("com.github.wangchenyan:crouter-plugin:1.0")
     }
 }
