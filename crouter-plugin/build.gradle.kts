@@ -1,20 +1,20 @@
 plugins {
     id("java-library")
-    id("org.jetbrains.kotlin.jvm")
+    alias(libs.plugins.kotlin.jvm)
     id("java-gradle-plugin")
     id("maven-publish")
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.valueOf(libs.versions.java.get())
+    targetCompatibility = JavaVersion.valueOf(libs.versions.java.get())
 }
 
 dependencies {
     implementation(gradleApi())
-    compileOnly("com.android.tools.build:gradle:7.4.2")
-    implementation("org.ow2.asm:asm:9.5")
-    implementation("org.ow2.asm:asm-commons:9.5")
+    compileOnly(libs.gradle)
+    implementation(libs.asm)
+    implementation(libs.asm.commons)
     implementation(project(":crouter-annotation"))
 }
 

@@ -1,5 +1,5 @@
 plugins {
-    id("kotlin")
+    alias(libs.plugins.kotlin.jvm)
     id("maven-publish")
 }
 

@@ -1,21 +1,20 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
     id("maven-publish")
 }
 
 android {
     namespace = "me.wcy.router"
-    compileSdk = 33
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 14
-        targetSdk = 33
+        minSdk = libs.versions.minSdk.get().toInt()
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.valueOf(libs.versions.java.get())
+        targetCompatibility = JavaVersion.valueOf(libs.versions.java.get())
     }
 }
 
@@ -31,5 +30,5 @@ afterEvaluate {
 
 dependencies {
     api(project(":crouter-annotation"))
-    compileOnly("androidx.appcompat:appcompat:1.6.1")
+    compileOnly(libs.appcompat)
 }

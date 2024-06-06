@@ -1,0 +1,27 @@
+[versions]
+agp = "7.4.2"
+kotlin = "1.8.20"
+ksp = "1.8.20-1.0.11"
+asm = "9.5"
+java = "VERSION_11"
+jvmTarget = "11"
+compileSdk = "33"
+targetSdk = "33"
+minSdk = "21"
+versionCode = "300"
+versionName = "3.0.0"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+[libraries]
+appcompat = { group = "androidx.appcompat", name = "appcompat", version = "1.6.1" }
+gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+ksp = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
+asm = { group = "org.ow2.asm", name = "asm", version.ref = "asm" }
+asm-commons = { group = "org.ow2.asm", name = "asm-commons", version.ref = "asm" }
+kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version = "1.12.0" }
