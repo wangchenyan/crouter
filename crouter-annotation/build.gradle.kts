@@ -8,6 +8,9 @@ afterEvaluate {
         publications {
             create<MavenPublication>("maven") {
                 from(components["java"])
+                groupId = "com.github.wangchenyan"
+                artifactId = "crouter-annotation"
+                version = "1.0"
             }
         }
     }

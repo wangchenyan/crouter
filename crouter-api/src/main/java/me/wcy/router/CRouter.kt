@@ -2,7 +2,8 @@ package me.wcy.router
 
 import android.app.Application
 import android.content.Context
-import me.wcy.router.annotation.RouteInfo
+import me.wcy.router.annotation.CRouterConsts
+import me.wcy.router.annotation.RouteMeta
 
 /**
  * 路由入口
@@ -13,8 +14,13 @@ object CRouter {
 
     private var routerClient: RouterClient? = null
     private lateinit var application: Application
-    private val routeSet by lazy {
-        RouteSet().routeSet
+
+    internal val routes: MutableSet<RouteMeta> = mutableSetOf()
+
+    init {
+        val routeRegisterer = Class.forName(CRouterConsts.FINAL_REGISTERER_CLASS_NAME)
+            .newInstance() as IRouteRegisterer
+        routeRegisterer.registerModuleRoutes()
     }
 
     /**
@@ -33,6 +39,10 @@ object CRouter {
         return Request.Builder().context(context ?: this.application)
     }
 
+    fun register(routeMeta: RouteMeta) {
+        routes.add(routeMeta)
+    }
+
     internal fun setContext(application: Application) {
         this.application = application
     }
@@ -42,9 +52,5 @@ object CRouter {
             routerClient = RouterClient()
         }
         return routerClient!!
-    }
-
-    internal fun getRouteSet(): Set<RouteInfo> {
-        return routeSet
     }
 }

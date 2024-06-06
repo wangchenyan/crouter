@@ -3,11 +3,12 @@ plugins {
     id("com.android.application") version "7.4.2" apply false
     id("com.android.library") version "7.4.2" apply false
     id("org.jetbrains.kotlin.android") version "1.8.20" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.8.20" apply false
     id("com.google.devtools.ksp") version "1.8.20-1.0.11" apply false
 }
 
 buildscript {
     dependencies {
-        classpath("com.github.wangchenyan:AutoRegister:1.4.3-beta02")
+        classpath("com.github.wangchenyan:crouter-plugin:1.0")
     }
 }

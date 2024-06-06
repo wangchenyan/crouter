@@ -20,6 +20,10 @@
 
 ## Change Log
 
+`v3`
+
+- 支持 APG 8+
+
 `v2`
 
 - 优化 Api 调用
@@ -49,13 +53,15 @@ dependencyResolutionManagement {
 }
 ```
 
-### 2. 添加 auto-register，用于字节码注入
+### 2. 添加 crouter-plugin 插件，用于字节码注入
+
+> 注意：插件仅支持 AGP 7.4+
 
 ```kotlin
 // root build file
 buildscript {
     dependencies {
-        classpath("com.github.wangchenyan:AutoRegister:1.4.3-beta02")
+        classpath("com.github.wangchenyan.crouter:crouter-plugin:${latestVersion}")
     }
 }
 ```
@@ -63,21 +69,7 @@ buildscript {
 ```kotlin
 // app build file
 plugins {
-    id("auto-register")
-}
-
-autoregister {
-    registerInfo = listOf(
-        mapOf(
-            "scanInterface" to "me.wcy.router.annotation.RouteLoader",
-            "codeInsertToClassName" to "me.wcy.router.RouteSet",
-            "codeInsertToMethodName" to "init",
-            "registerMethodName" to "register",
-            "include" to listOf("me/wcy/router/annotation/loader/.*")
-        )
-    )
-    // 如果 ASM 版本不兼容，可修改为兼容版本，默认为 ASM6
-    amsApiVersion = Opcodes.ASM6
+    id("crouter-plugin")
 }
 ```
 
@@ -101,7 +93,7 @@ ksp {
 }
 
 dependencies {
-    ksp("com.github.wangchenyan.crouter:crouter-compiler:${latestVersion}")
+    ksp("com.github.wangchenyan.crouter:crouter-processor:${latestVersion}")
     implementation("com.github.wangchenyan.crouter:crouter-api:${latestVersion}")
 }
 ```

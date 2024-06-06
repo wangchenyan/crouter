@@ -4,6 +4,7 @@ pluginManagement {
         google()
         mavenCentral()
         maven("https://jitpack.io")
+        mavenLocal()
     }
 }
 dependencyResolutionManagement {
@@ -14,7 +15,9 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "crouter"
-include(":sample")
 include(":crouter-annotation")
 include(":crouter-api")
-include(":crouter-compiler")
+include(":crouter-processor")
+include(":crouter-plugin")
+include(":sample")
+include(":sample-lib")
